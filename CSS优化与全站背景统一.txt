@@ -1,0 +1,5024 @@
+﻿CSS优化与全站背景统一
+https://gemini.google.com/app/627c241b0c95e9e0
+
+
+User prompt: 这是我现在的代码，你先阅读一下，我觉得我的css有点冗余；此外我要把我所有的页面的背景颜色都改成跟index界面一个颜色
+Response: 你现在的代码结构清晰，但确实在 CSS 存在一些未使用的死代码（冗余），且关于背景颜色，你的 CSS 中出现了三种冲突/不统一的定义：
+1. 亮色默认背景 (:root 中定义为 --bg-primary: #fafafa;)
+2. Index 主页 home-body 的背景（定义为 #030712）
+3. Index Canvas #solarCanvas 的背景（定义为 #0b0f19）
+一、 修改方案
+为了实现 “所有页面的背景颜色都改成跟 index 界面一个颜色”，并且 精简冗余 CSS，推荐做以下修改：
+1. 将全局背景色与主题统一为深空夜色 (#0b0f19 或 #030712)
+把 :root 变量修改为暗色系，并让导航栏、卡片、文字颜色自动适配深色模式。
+2. 清理 CSS 冗余代码
+* 删除了已弃用的旧版 Hero 样式（如 .hero-section, .hero-content, .profile-img）。
+* 删除了无用的两栏布局样式（如 .content-wrapper, .left-column, .right-column, .nav-card-link）。
+* 合并重复的 #solarCanvas 样式规则。
+二、 优化后的 style.css 完整代码
+你可以直接用以下代码完全替换原有的 style.css 文件：
+/* ==========================================================================
+  1. Google Fonts Import
+  ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;700&display=swap');
+
+/* ==========================================================================
+  2. Reset & Dark Theme Variables (统一全站深色背景)
+  ========================================================================== */
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+:root {
+   --bg-primary: #0b0f19;        /* 与 Index 主页 canvas 统一的深邃太空背景色 */
+   --bg-secondary: #161e2e;      /* 卡片深色背景 */
+   --accent-color: #38bdf8;      /* 亮点高亮色 (柔和天蓝色) */
+   --text-primary: #f8fafc;      /* 主文字：亮白/浅灰 */
+   --text-secondary: #94a3b8;    /* 次要文字：柔和灰 */
+   --border-color: rgba(255, 255, 255, 0.1); /* 浅色半透明边框 */
+   --card-hover-shadow: rgba(0, 0, 0, 0.3);
+
+   --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+html {
+   scroll-behavior: smooth;
+}
+
+body {
+   font-family: var(--font-body);
+   background-color: var(--bg-primary);
+   color: var(--text-primary);
+   line-height: 1.6;
+   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+   font-family: var(--font-heading);
+   letter-spacing: -0.02em;
+}
+
+/* ==========================================================================
+  3. Navigation Bar (通用于所有页面)
+  ========================================================================== */
+header {
+   position: fixed;
+   top: 0;
+   width: 100%;
+   background-color: rgba(11, 15, 25, 0.8); /* 适配深色背景半透明 */
+   backdrop-filter: blur(10px);
+   border-bottom: 1px solid var(--border-color);
+   z-index: 1000;
+}
+
+.navbar {
+   max-width: 1200px;
+   margin: 0 auto;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 1.2rem 2rem;
+}
+
+.logo a {
+   color: var(--text-primary);
+   font-size: 1.3rem;
+   font-weight: 700;
+   text-decoration: none;
+}
+
+.nav-links {
+   display: flex;
+   list-style: none;
+   gap: 2rem;
+}
+
+.nav-links a {
+   color: var(--text-secondary);
+   text-decoration: none;
+   font-size: 0.95rem;
+   font-weight: 500;
+   transition: color 0.2s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+   color: var(--accent-color);
+   font-weight: 600;
+}
+
+/* ==========================================================================
+  4. Page Container & Cards (About, Projects, Contact 子页面)
+  ========================================================================== */
+.page-container {
+   max-width: 900px;
+   margin: 0 auto;
+   padding: 8rem 2rem 4rem 2rem;
+   min-height: 85vh;
+}
+
+.page-container h1 {
+   font-size: 2.5rem;
+   margin-bottom: 2rem;
+   color: var(--text-primary);
+}
+
+.info-card {
+   background-color: var(--bg-secondary);
+   padding: 2rem;
+   border-radius: 16px;
+   border: 1px solid var(--border-color);
+   margin-bottom: 1.5rem;
+}
+
+.info-card h3 {
+   color: var(--text-primary);
+   margin-bottom: 1rem;
+   font-size: 1.25rem;
+   font-weight: 600;
+}
+
+.skills-list {
+   list-style: none;
+   display: flex;
+   flex-wrap: wrap;
+   gap: 0.6rem;
+}
+
+.skills-list li {
+   background-color: var(--bg-primary);
+   color: var(--text-secondary);
+   border: 1px solid var(--border-color);
+   padding: 0.4rem 0.9rem;
+   border-radius: 20px;
+   font-size: 0.875rem;
+   font-weight: 500;
+}
+
+/* Projects 列表网格 */
+.projects-grid {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+   gap: 2rem;
+}
+
+.project-card {
+   background-color: var(--bg-secondary);
+   border: 1px solid var(--border-color);
+   border-radius: 16px;
+   overflow: hidden;
+}
+
+.project-img {
+   width: 100%;
+   height: 200px;
+   object-fit: cover;
+}
+
+.project-info {
+   padding: 1.5rem;
+}
+
+.project-info h3 {
+   margin-bottom: 0.5rem;
+}
+
+.project-info p {
+   color: var(--text-secondary);
+   font-size: 0.95rem;
+   margin-bottom: 1.5rem;
+}
+
+.project-links {
+   display: flex;
+   gap: 0.8rem;
+}
+
+/* 按钮组件 */
+.btn {
+   display: inline-block;
+   padding: 0.5rem 1rem;
+   background-color: var(--accent-color);
+   color: #0b0f19;
+   text-decoration: none;
+   border-radius: 8px;
+   font-size: 0.875rem;
+   font-weight: 600;
+   transition: opacity 0.2s ease;
+}
+
+.btn:hover {
+   opacity: 0.9;
+}
+
+.btn-outline {
+   background-color: transparent;
+   color: var(--text-primary);
+   border: 1px solid var(--border-color);
+}
+
+.btn-outline:hover {
+   border-color: var(--accent-color);
+   color: var(--accent-color);
+}
+
+/* Contact 专有样式 */
+.contact-subtitle {
+   color: var(--text-secondary);
+   margin-bottom: 2rem;
+}
+
+.contact-list {
+   list-style: none;
+}
+
+.contact-list li {
+   margin-bottom: 1rem;
+   font-size: 1.1rem;
+}
+
+.contact-list a {
+   color: var(--accent-color);
+   text-decoration: none;
+}
+
+/* ==========================================================================
+  5. Solar System Interactive Canvas (Index 页面专属)
+  ========================================================================== */
+.home-body {
+   overflow: hidden;
+}
+
+.solar-main {
+   position: relative;
+   width: 100vw;
+   height: 100vh;
+}
+
+.hero-header {
+   position: absolute;
+   top: 90px;
+   left: 50%;
+   transform: translateX(-50%);
+   text-align: center;
+   z-index: 10;
+   pointer-events: none;
+}
+
+.hero-header h1 {
+   font-size: 4.5rem;
+   font-weight: 700;
+   color: #ffffff;
+   text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.hero-header .tagline {
+   color: var(--text-secondary);
+   font-size: 1.1rem;
+}
+
+.back-btn {
+   pointer-events: auto;
+   margin-top: 1rem;
+   padding: 0.5rem 1.2rem;
+   background-color: rgba(255, 255, 255, 0.1);
+   border: 1px solid var(--border-color);
+   color: #fff;
+   border-radius: 20px;
+   cursor: pointer;
+   backdrop-filter: blur(5px);
+   transition: all 0.3s;
+}
+
+.back-btn:hover {
+   background-color: var(--accent-color);
+   border-color: var(--accent-color);
+   color: #0b0f19;
+}
+
+.hidden {
+   display: none;
+}
+
+.solar-system-container {
+   width: 100%;
+   height: 100%;
+}
+
+#solarCanvas {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100vw;
+   height: 100vh;
+   z-index: 0;
+   background-color: var(--bg-primary);
+   cursor: pointer;
+}
+
+/* ==========================================================================
+  6. Footer
+  ========================================================================== */
+footer {
+   text-align: center;
+   padding: 2.5rem;
+   background-color: var(--bg-secondary);
+   color: var(--text-secondary);
+   font-size: 0.875rem;
+   border-top: 1px solid var(--border-color);
+}
+
+/* ==========================================================================
+  7. Responsive Design
+  ========================================================================== */
+@media (max-width: 768px) {
+   .hero-header h1 {
+       font-size: 2.4rem;
+   }
+}
+
+三、 HTML 文件的微调建议（可选）
+由于我们已经把 :root 全局背景统一成了暗色，你在 index.html 的 <body> 上写的 class="home-body" 依然保留即可，用来限制 index 页面隐藏滚动条（overflow: hidden）。
+其他页面（如 about.html, projects.html, contact.html）无需额外增加任何类名，打开时就会自动应用统一的深空背景色，且字体卡片样式与主页画风一致。
+________________
+
+
+User prompt: project界面改一下，点开之后里面是两个跳转，一个是去part1，另一个是去part2
+Response: 为了实现点击项目卡片后分别跳转到 Part 1 和 Part 2，我们可以更新 projects.html，将界面改造为两个主方向卡片（或增加内部锚点定位），方便用户直接选择对应的项目展示区块。
+此外，为了配合之前的太阳系主页跳转逻辑（例如从小行星带跳转到 projects.html#part2），我们在页面中分别添加了 id="part1" 和 id="part2"。
+修改后的 projects.html 完整代码
+请用以下代码更新你的 projects.html 文件：
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Projects | Jack</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   <header>
+       <nav class="navbar">
+           <div class="logo"><a href="index.html">Jack's Portfolio</a></div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html">About</a></li>
+               <li><a href="projects.html" class="active">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <main class="page-container">
+       <h1>My Projects</h1>
+       <p class="contact-subtitle">Explore my work categorized into Part 1 and Part 2 below.</p>
+
+       <!-- 项目卡片区域 (分为 Part 1 与 Part 2 两个大的入口/区块) -->
+       <div class="projects-grid">
+           
+           <!-- Part 1 项目卡片 -->
+           <article class="project-card" id="part1">
+               <img src="https://via.placeholder.com/400x250" alt="Projects Part 1" class="project-img">
+               <div class="project-info">
+                   <h3>Part 1: Web Applications</h3>
+                   <p>Explore interactive web tools, client projects, and front-end development experiments.</p>
+                   <div class="project-links">
+                       <!-- 可以直接锚点跳转到详情或者跳转到具体的外部链接/演示页面 -->
+                       <a href="#part1-details" class="btn">View Part 1 Projects →</a>
+                   </div>
+               </div>
+           </article>
+
+           <!-- Part 2 项目卡片 -->
+           <article class="project-card" id="part2">
+               <img src="https://via.placeholder.com/400x250" alt="Projects Part 2" class="project-img">
+               <div class="project-info">
+                   <h3>Part 2: Systems & Algorithms</h3>
+                   <p>Dive into backend architecture, data visualization, and specialized algorithmic builds.</p>
+                   <div class="project-links">
+                       <a href="#part2-details" class="btn">View Part 2 Projects →</a>
+                   </div>
+               </div>
+           </article>
+
+       </div>
+
+       <!-- 详细展示区块 (可选：对应上面卡片点击后的位置) -->
+       <section id="part1-details" style="margin-top: 4rem;">
+           <h2 style="margin-bottom: 1rem; color: var(--accent-color);">Part 1 Showcase</h2>
+           <div class="info-card">
+               <p><!-- PLACEHOLDER: Part 1 项目详细内容说明或列表 -->Here are your detailed Part 1 projects and case studies.</p>
+           </div>
+       </section>
+
+       <section id="part2-details" style="margin-top: 3rem;">
+           <h2 style="margin-bottom: 1rem; color: var(--accent-color);">Part 2 Showcase</h2>
+           <div class="info-card">
+               <p><!-- PLACEHOLDER: Part 2 项目详细内容说明或列表 -->Here are your detailed Part 2 projects and case studies.</p>
+           </div>
+       </section>
+   </main>
+
+   <footer>
+       <p>© 2026 Jack. All rights reserved.</p>
+   </footer>
+   <script src="javascript.js"></script>
+</body>
+</html>
+
+说明：
+1. 配合主页交互：小行星带在点击跳转到 projects.html#part2 时，会自动定位滑动到 Part 2 卡片的位置。
+2. 两入口结构：将原先的项目网格重构成两大板块卡片，包含清晰的标题、描述和跳转按钮。
+________________
+
+
+User prompt: 把showcase去掉，我等会会单独加入project1和2的html
+Response: 没问题！已为你移除 Showcase 区块。现在页面只保留两个干净的项目卡片，分别对应 Part 1 和 Part 2，按钮可以直接链接到你后续准备创建的 project1.html 和 project2.html（也可以根据你的文件名随时调整路径）。
+修改后的 projects.html 完整代码
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Projects | Jack</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   <header>
+       <nav class="navbar">
+           <div class="logo"><a href="index.html">Jack's Portfolio</a></div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html">About</a></li>
+               <li><a href="projects.html" class="active">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <main class="page-container">
+       <h1>My Projects</h1>
+       <p class="contact-subtitle">Select a section below to view specific projects.</p>
+
+       <!-- 项目分类卡片区域 -->
+       <div class="projects-grid">
+           
+           <!-- Part 1 卡片 -->
+           <article class="project-card" id="part1">
+               <img src="https://via.placeholder.com/400x250" alt="Projects Part 1" class="project-img">
+               <div class="project-info">
+                   <h3>Part 1</h3>
+                   <p>Explore front-end web applications, interactive interfaces, and client projects.</p>
+                   <div class="project-links">
+                       <a href="project1.html" class="btn">View Part 1 →</a>
+                   </div>
+               </div>
+           </article>
+
+           <!-- Part 2 卡片 -->
+           <article class="project-card" id="part2">
+               <img src="https://via.placeholder.com/400x250" alt="Projects Part 2" class="project-img">
+               <div class="project-info">
+                   <h3>Part 2</h3>
+                   <p>Explore backend systems, algorithms, and data analysis projects.</p>
+                   <div class="project-links">
+                       <a href="project2.html" class="btn">View Part 2 →</a>
+                   </div>
+               </div>
+           </article>
+
+       </div>
+   </main>
+
+   <footer>
+       <p>© 2026 Jack. All rights reserved.</p>
+   </footer>
+   <script src="javascript.js"></script>
+</body>
+</html>
+
+________________
+
+
+User prompt: 我创建了两个叫做projectp1，2的html，然后点击part1和2会跳转这两个
+Response: 太棒了！我已经帮你更新了 projects.html，把两个卡片的跳转链接正式改为了指向你的 projectp1.html 和 projectp2.html。
+更新后的 projects.html 完整代码
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Projects | Jack</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   <header>
+       <nav class="navbar">
+           <div class="logo"><a href="index.html">Jack's Portfolio</a></div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html">About</a></li>
+               <li><a href="projects.html" class="active">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <main class="page-container">
+       <h1>My Projects</h1>
+       <p class="contact-subtitle">Select a section below to view specific projects.</p>
+
+       <!-- 项目分类卡片区域 -->
+       <div class="projects-grid">
+           
+           <!-- Part 1 卡片 -->
+           <article class="project-card" id="part1">
+               <img src="https://via.placeholder.com/400x250" alt="Projects Part 1" class="project-img">
+               <div class="project-info">
+                   <h3>Part 1</h3>
+                   <p>Explore front-end web applications, interactive interfaces, and client projects.</p>
+                   <div class="project-links">
+                       <a href="projectp1.html" class="btn">View Part 1 →</a>
+                   </div>
+               </div>
+           </article>
+
+           <!-- Part 2 卡片 -->
+           <article class="project-card" id="part2">
+               <img src="https://via.placeholder.com/400x250" alt="Projects Part 2" class="project-img">
+               <div class="project-info">
+                   <h3>Part 2</h3>
+                   <p>Explore backend systems, algorithms, and data analysis projects.</p>
+                   <div class="project-links">
+                       <a href="projectp2.html" class="btn">View Part 2 →</a>
+                   </div>
+               </div>
+           </article>
+
+       </div>
+   </main>
+
+   <footer>
+       <p>© 2026 Jack. All rights reserved.</p>
+   </footer>
+   <script src="javascript.js"></script>
+</body>
+</html>
+
+提示：
+主页 javascript.js 中的小行星带点击跳转默认也是指向 projects.html#part2，现在用户无论是在主页画布点击小行星带，还是在 projects.html 页面手动点击按钮，都能无缝串联到 projectp1.html 和 projectp2.html 了！
+________________
+
+
+User prompt: 好的，我们现在点击地球会直接跳转part1，点击小行星带直接跳转part2
+Response: 明白！我们需要更新 javascript.js 中的跳转逻辑以及提示文本 (Tooltip)，让点击地球时直接跳转到 projectp1.html，点击小行星带时直接跳转到 projectp2.html。
+以下是修改后的完整 javascript.js 代码：
+window.addEventListener('DOMContentLoaded', () => {
+   const canvas = document.getElementById('solarCanvas');
+   if (!canvas) return;
+
+   const ctx = canvas.getContext('2d');
+   const backBtn = document.getElementById('backToSolarBtn');
+
+   let width = (canvas.width = window.innerWidth);
+   let height = (canvas.height = window.innerHeight);
+
+   window.addEventListener('resize', () => {
+       width = canvas.width = window.innerWidth;
+       height = canvas.height = window.innerHeight;
+   });
+
+   // 状态管理
+   let currentMode = 'SOLAR'; // 'SOLAR' | 'EARTH_MOON'
+   let hoveredEntity = null;
+   let mousePos = { x: 0, y: 0 };
+   let transitionState = { active: false, targetUrl: '', progress: 0 };
+   let sunPulse = 0;
+   let earthRotation = 0; // 地球云层旋转角度
+
+   // 太阳与小行星带
+   const sun = { x: 0, y: 0, radius: 48, color: '#f97316' };
+   const asteroidBelt = { minRadius: 190, maxRadius: 220, particles: [] };
+
+   for (let i = 0; i < 320; i++) {
+       const angle = Math.random() * Math.PI * 2;
+       const dist = asteroidBelt.minRadius + Math.random() * (asteroidBelt.maxRadius - asteroidBelt.minRadius);
+       asteroidBelt.particles.push({
+           angle,
+           dist,
+           speed: (0.0003 + Math.random() * 0.0008) * (Math.random() > 0.5 ? 1 : -1),
+           size: Math.random() * 1.8 + 0.6,
+           color: Math.random() > 0.3 ? '#94a3b8' : '#cbd5e1'
+       });
+   }
+
+   // 8大行星数据
+   const planets = [
+       { name: 'Mercury', label: 'Mercury', func: '', distance: 80, radius: 5, color: '#a1a1aa', speed: 0.012, angle: 0.5 },
+       { name: 'Venus', label: 'Venus', func: '', distance: 115, radius: 8, color: '#fde047', speed: 0.008, angle: 2.1 },
+       { name: 'Earth', label: 'Earth', func: 'Click to enter Earth-Moon system', distance: 160, radius: 11, color: '#38bdf8', speed: 0.006, angle: 4.2 },
+       { name: 'Mars', label: 'Mars', func: '', distance: 245, radius: 7, color: '#ef4444', speed: 0.0045, angle: 1.3 },
+       { name: 'Jupiter', label: 'Jupiter', func: '', distance: 310, radius: 20, color: '#eab308', speed: 0.003, angle: 5.5, hasStripes: true },
+       { name: 'Saturn', label: 'Saturn', func: '', distance: 375, radius: 15, color: '#fef08a', speed: 0.002, angle: 3.1, hasRings: true },
+       { name: 'Uranus', label: 'Uranus', func: '', distance: 430, radius: 11, color: '#22d3ee', speed: 0.0015, angle: 0.2 },
+       { name: 'Neptune', label: 'Neptune', func: '', distance: 485, radius: 10, color: '#3b82f6', speed: 0.001, angle: 2.8 }
+   ];
+
+   // 显著放大尺寸的地月系 (更新地球点击提示文本)
+   const earthMoonSystem = {
+       earth: { name: 'Earth', label: 'Earth', func: 'Click to View Projects (Part 1)', x: 0, y: 0, radius: 85, color: '#0284c7' },
+       moon: { name: 'Moon', label: 'Moon', func: 'Click to View About Me', distance: 210, radius: 22, color: '#cbd5e1', angle: 0, speed: 0.012 }
+   };
+
+   // 主渲染循环
+   function animate() {
+       ctx.clearRect(0, 0, width, height);
+       const cx = width / 2;
+       const cy = height / 2;
+
+       sunPulse += 0.03;
+       earthRotation += 0.005;
+
+       if (currentMode === 'SOLAR') {
+           drawSolarSystem(cx, cy);
+       } else if (currentMode === 'EARTH_MOON') {
+           drawEarthMoonSystem(cx, cy);
+       }
+
+       drawTooltip();
+
+       if (transitionState.active) {
+           drawTransitionEffect();
+       }
+
+       requestAnimationFrame(animate);
+   }
+
+   // 1. 太阳系绘制
+   function drawSolarSystem(cx, cy) {
+       // 太阳日冕发光
+       const glowRadius = sun.radius + Math.sin(sunPulse) * 5 + (hoveredEntity === 'Sun' ? 20 : 0);
+       const sunGlow = ctx.createRadialGradient(cx, cy, sun.radius * 0.4, cx, cy, glowRadius + 30);
+       sunGlow.addColorStop(0, '#fdba74');
+       sunGlow.addColorStop(0.5, 'rgba(249, 115, 22, 0.45)');
+       sunGlow.addColorStop(1, 'rgba(249, 115, 22, 0)');
+       
+       ctx.beginPath();
+       ctx.arc(cx, cy, glowRadius + 30, 0, Math.PI * 2);
+       ctx.fillStyle = sunGlow;
+       ctx.fill();
+
+       ctx.beginPath();
+       ctx.arc(cx, cy, sun.radius, 0, Math.PI * 2);
+       ctx.fillStyle = sun.color;
+       ctx.fill();
+
+       // 小行星带
+       const isAsteroidHovered = hoveredEntity === 'AsteroidBelt';
+       asteroidBelt.particles.forEach(p => {
+           p.angle += p.speed;
+           const px = cx + Math.cos(p.angle) * p.dist;
+           const py = cy + Math.sin(p.angle) * p.dist;
+           ctx.beginPath();
+           ctx.arc(px, py, p.size, 0, Math.PI * 2);
+           ctx.fillStyle = isAsteroidHovered ? '#38bdf8' : p.color;
+           ctx.fill();
+       });
+
+       // 8大行星
+       planets.forEach(p => {
+           p.angle += p.speed;
+           const px = cx + Math.cos(p.angle) * p.distance;
+           const py = cy + Math.sin(p.angle) * p.distance;
+           p.x = px; p.y = py;
+
+           ctx.beginPath();
+           ctx.arc(cx, cy, p.distance, 0, Math.PI * 2);
+           ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+           ctx.stroke();
+
+           if (hoveredEntity === p.name) {
+               ctx.beginPath();
+               ctx.arc(px, py, p.radius + 10, 0, Math.PI * 2);
+               ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+               ctx.fill();
+           }
+
+           if (p.hasRings) {
+               ctx.save();
+               ctx.translate(px, py);
+               ctx.rotate(0.4);
+               ctx.beginPath();
+               ctx.ellipse(0, 0, p.radius * 2.3, p.radius * 0.7, 0, 0, Math.PI * 2);
+               ctx.strokeStyle = 'rgba(254, 240, 138, 0.7)';
+               ctx.lineWidth = 3;
+               ctx.stroke();
+               ctx.restore();
+           }
+
+           ctx.beginPath();
+           ctx.arc(px, py, p.radius, 0, Math.PI * 2);
+           ctx.fillStyle = p.color;
+           ctx.fill();
+
+           if (p.hasStripes) {
+               ctx.save();
+               ctx.beginPath();
+               ctx.arc(px, py, p.radius, 0, Math.PI * 2);
+               ctx.clip();
+               ctx.fillStyle = '#ca8a04';
+               ctx.fillRect(px - p.radius, py - 4, p.radius * 2, 3);
+               ctx.fillRect(px - p.radius, py + 3, p.radius * 2, 4);
+               ctx.restore();
+           }
+       });
+   }
+
+   // 2. 地月系绘制
+   function drawEarthMoonSystem(cx, cy) {
+       const er = earthMoonSystem.earth.radius;
+       earthMoonSystem.earth.x = cx;
+       earthMoonSystem.earth.y = cy;
+
+       // 2.1 地球外大气光晕层
+       const atmosGlow = ctx.createRadialGradient(cx, cy, er * 0.9, cx, cy, er + 25);
+       atmosGlow.addColorStop(0, 'rgba(56, 189, 248, 0.4)');
+       atmosGlow.addColorStop(1, 'rgba(56, 189, 248, 0)');
+       ctx.beginPath();
+       ctx.arc(cx, cy, er + 25, 0, Math.PI * 2);
+       ctx.fillStyle = atmosGlow;
+       ctx.fill();
+
+       // Hover 时的外包裹高亮
+       if (hoveredEntity === 'Earth_Sub') {
+           ctx.beginPath();
+           ctx.arc(cx, cy, er + 15, 0, Math.PI * 2);
+           ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+           ctx.fill();
+       }
+
+       // 地球海洋基底
+       ctx.beginPath();
+       ctx.arc(cx, cy, er, 0, Math.PI * 2);
+       ctx.fillStyle = earthMoonSystem.earth.color;
+       ctx.fill();
+
+       // 地球陆地与云层细节
+       ctx.save();
+       ctx.beginPath();
+       ctx.arc(cx, cy, er, 0, Math.PI * 2);
+       ctx.clip();
+
+       ctx.fillStyle = '#16a34a'; // 大陆绿色
+       ctx.beginPath();
+       ctx.arc(cx - 20 + Math.cos(earthRotation) * 15, cy - 10, 35, 0, Math.PI * 2);
+       ctx.arc(cx + 30 + Math.cos(earthRotation) * 15, cy + 20, 28, 0, Math.PI * 2);
+       ctx.fill();
+
+       ctx.fillStyle = 'rgba(255, 255, 255, 0.55)'; // 白云纹理
+       ctx.beginPath();
+       ctx.arc(cx + Math.sin(earthRotation * 1.5) * 40, cy - 25, 22, 0, Math.PI * 2);
+       ctx.arc(cx - Math.sin(earthRotation * 1.5) * 35, cy + 30, 25, 0, Math.PI * 2);
+       ctx.fill();
+
+       const shadowGrad = ctx.createLinearGradient(cx - er, cy - er, cx + er, cy + er);
+       shadowGrad.addColorStop(0, 'rgba(0,0,0,0)');
+       shadowGrad.addColorStop(0.75, 'rgba(15, 23, 42, 0.4)');
+       shadowGrad.addColorStop(1, 'rgba(3, 7, 18, 0.85)');
+       ctx.fillStyle = shadowGrad;
+       ctx.fillRect(cx - er, cy - er, er * 2, er * 2);
+       ctx.restore();
+
+       ctx.beginPath();
+       ctx.arc(cx, cy, er, 0, Math.PI * 2);
+       ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+       ctx.lineWidth = 2;
+       ctx.stroke();
+
+       // 2.2 月球轨道与月球细节
+       const em = earthMoonSystem.moon;
+       em.angle += em.speed;
+       const mx = cx + Math.cos(em.angle) * em.distance;
+       const my = cy + Math.sin(em.angle) * em.distance;
+       em.x = mx; em.y = my;
+
+       ctx.beginPath();
+       ctx.arc(cx, cy, em.distance, 0, Math.PI * 2);
+       ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+       ctx.lineWidth = 1.5;
+       ctx.stroke();
+
+       if (hoveredEntity === 'Moon_Sub') {
+           ctx.beginPath();
+           ctx.arc(mx, my, em.radius + 12, 0, Math.PI * 2);
+           ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+           ctx.fill();
+       }
+
+       ctx.beginPath();
+       ctx.arc(mx, my, em.radius, 0, Math.PI * 2);
+       ctx.fillStyle = em.color;
+       ctx.fill();
+
+       ctx.save();
+       ctx.beginPath();
+       ctx.arc(mx, my, em.radius, 0, Math.PI * 2);
+       ctx.clip();
+       ctx.fillStyle = '#94a3b8';
+       ctx.beginPath();
+       ctx.arc(mx - 5, my - 4, 6, 0, Math.PI * 2);
+       ctx.arc(mx + 6, my + 5, 8, 0, Math.PI * 2);
+       ctx.arc(mx - 2, my + 8, 4, 0, Math.PI * 2);
+       ctx.fill();
+       ctx.restore();
+   }
+
+   // 3. Tooltip 绘制 (更新小行星带提示词)
+   function drawTooltip() {
+       if (!hoveredEntity) return;
+
+       let nameText = '';
+       let funcText = '';
+
+       if (currentMode === 'SOLAR') {
+           if (hoveredEntity === 'Sun') {
+               nameText = 'Sun';
+               funcText = 'Click to View Contact Page';
+           } else if (hoveredEntity === 'AsteroidBelt') {
+               nameText = 'Asteroid Belt';
+               funcText = 'Click to View Projects (Part 2)';
+           } else {
+               const found = planets.find(p => p.name === hoveredEntity);
+               if (found) {
+                   nameText = found.label;
+                   funcText = found.func;
+               }
+           }
+       } else if (currentMode === 'EARTH_MOON') {
+           if (hoveredEntity === 'Earth_Sub') {
+               nameText = earthMoonSystem.earth.label;
+               funcText = earthMoonSystem.earth.func;
+           } else if (hoveredEntity === 'Moon_Sub') {
+               nameText = earthMoonSystem.moon.label;
+               funcText = earthMoonSystem.moon.func;
+           }
+       }
+
+       if (!nameText) return;
+
+       const tx = mousePos.x + 20;
+       const ty = mousePos.y - 20;
+
+       ctx.font = 'bold 18px "Inter", sans-serif';
+       const nameWidth = ctx.measureText(nameText).width;
+       ctx.font = '14px "Inter", sans-serif';
+       const funcWidth = funcText ? ctx.measureText(funcText).width : 0;
+
+       const boxWidth = Math.max(nameWidth, funcWidth) + 30;
+       const boxHeight = funcText ? 56 : 36;
+
+       ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+       ctx.strokeStyle = '#38bdf8';
+       ctx.lineWidth = 1.5;
+       ctx.beginPath();
+       ctx.roundRect(tx, ty, boxWidth, boxHeight, 8);
+       ctx.fill();
+       ctx.stroke();
+
+       ctx.fillStyle = '#ffffff';
+       ctx.font = 'bold 17px "Inter", sans-serif';
+       ctx.fillText(nameText, tx + 15, ty + 24);
+
+       if (funcText) {
+           ctx.fillStyle = '#38bdf8';
+           ctx.font = '13px "Inter", sans-serif';
+           ctx.fillText(funcText, tx + 15, ty + 44);
+       }
+   }
+
+   // 鼠标移动监听
+   canvas.addEventListener('mousemove', (e) => {
+       const rect = canvas.getBoundingClientRect();
+       mousePos.x = e.clientX - rect.left;
+       mousePos.y = e.clientY - rect.top;
+
+       const cx = width / 2;
+       const cy = height / 2;
+       hoveredEntity = null;
+
+       if (currentMode === 'SOLAR') {
+           if (Math.hypot(mousePos.x - cx, mousePos.y - cy) < sun.radius) {
+               hoveredEntity = 'Sun';
+               return;
+           }
+           const distFromCenter = Math.hypot(mousePos.x - cx, mousePos.y - cy);
+           if (distFromCenter >= asteroidBelt.minRadius && distFromCenter <= asteroidBelt.maxRadius) {
+               hoveredEntity = 'AsteroidBelt';
+               return;
+           }
+           planets.forEach(p => {
+               if (Math.hypot(mousePos.x - p.x, mousePos.y - p.y) < p.radius + 8) {
+                   hoveredEntity = p.name;
+               }
+           });
+       } else if (currentMode === 'EARTH_MOON') {
+           if (Math.hypot(mousePos.x - cx, mousePos.y - cy) < earthMoonSystem.earth.radius) {
+               hoveredEntity = 'Earth_Sub';
+           } else if (Math.hypot(mousePos.x - earthMoonSystem.moon.x, mousePos.y - earthMoonSystem.moon.y) < earthMoonSystem.moon.radius) {
+               hoveredEntity = 'Moon_Sub';
+           }
+       }
+   });
+
+   // 点击事件更新 (重点修改区域)
+   canvas.addEventListener('click', () => {
+       if (currentMode === 'SOLAR') {
+           if (hoveredEntity === 'Sun') triggerTransition('contact.html');
+           else if (hoveredEntity === 'Earth') {
+               currentMode = 'EARTH_MOON';
+               backBtn.classList.remove('hidden');
+           } else if (hoveredEntity === 'AsteroidBelt') {
+               // 点击小行星带直接跳转 projectp2.html
+               triggerTransition('projectp2.html');
+           }
+       } else if (currentMode === 'EARTH_MOON') {
+           if (hoveredEntity === 'Earth_Sub') {
+               // 地月系中点击地球直接跳转 projectp1.html
+               triggerTransition('projectp1.html');
+           } else if (hoveredEntity === 'Moon_Sub') {
+               triggerTransition('about.html');
+           }
+       }
+   });
+
+   // 返回按钮
+   backBtn.addEventListener('click', () => {
+       currentMode = 'SOLAR';
+       backBtn.classList.add('hidden');
+   });
+
+   function triggerTransition(url) {
+       transitionState.active = true;
+       transitionState.targetUrl = url;
+       setTimeout(() => { window.location.href = url; }, 700);
+   }
+
+   function drawTransitionEffect() {
+       transitionState.progress += 0.05;
+       ctx.fillStyle = `rgba(255, 255, 255, ${transitionState.progress})`;
+       ctx.fillRect(0, 0, width, height);
+   }
+
+   document.getElementById('nav-contact')?.addEventListener('click', (e) => {
+       e.preventDefault(); triggerTransition('contact.html');
+   });
+   document.getElementById('nav-about')?.addEventListener('click', (e) => {
+       e.preventDefault(); triggerTransition('about.html');
+   });
+   document.getElementById('nav-projects')?.addEventListener('click', (e) => {
+       e.preventDefault(); triggerTransition('projects.html');
+   });
+
+   animate();
+});
+
+修改要点：
+* 小行星带：在太阳系主视角下，点击直接触发跳转到 projectp2.html。
+* 地球：点击太阳系中的地球依然会先放大展开为“地月系”（保留酷炫的交互体验），在地月系中点击大地球则直接跳转到 projectp1.html。
+________________
+
+
+User prompt: project1页面我想做成这样一个效果：一张世界地图，上面在几个地区有一个光标(做成当地的地标/代表物的形状)然后下面有中英文地区名，然后点击这个光标可以跳进我在该地区做的项目的介绍
+Response: 这个效果非常酷炫且有交互质感！我们可以直接用 HTML + CSS 绝对定位 实现这个世界地图交互界面，无需引入复杂的第三方地图库，加载速度快且高度可定制。
+我们将实现以下功能：
+1. 背景地图：一张科技感深色世界地图背景。
+2. 光标 (Marker)：
+   * 采用呼吸灯脉冲波纹动画（Pulse Effect）。
+   * 包含地标图标（如自由女神像/长城/埃菲尔铁塔等 Emoji 或 SVG 图标）。
+   * 标注中英文地区名（如 Beijing 北京, New York 纽约）。
+3. 交互弹窗 / 跳转：点击地标光标后，触发跳转到该项目的详细介绍（或弹窗预览）。
+一、 projectp1.html 完整代码
+请创建一个名为 projectp1.html 的文件，填入以下代码：
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Part 1: Global Projects | Jack</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+       /* ==========================================================================
+          Map Container & Interactive Markers Styles
+          ========================================================================== */
+       .map-wrapper {
+           position: relative;
+           width: 100%;
+           max-width: 1000px;
+           margin: 2rem auto;
+           border-radius: 16px;
+           overflow: hidden;
+           border: 1px solid var(--border-color);
+           background-color: var(--bg-secondary);
+           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+       }
+
+       /* 渲染一张高科技暗色世界地图背景 */
+       .world-map-img {
+           width: 100%;
+           height: auto;
+           display: block;
+           opacity: 0.75;
+           filter: contrast(110%) brightness(90%);
+       }
+
+       /* 地图上的标记容器 */
+       .map-marker {
+           position: absolute;
+           transform: translate(-50%, -50%);
+           cursor: pointer;
+           z-index: 10;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           text-decoration: none;
+           transition: transform 0.3s ease;
+       }
+
+       .map-marker:hover {
+           transform: translate(-50%, -50%) scale(1.15);
+           z-index: 20;
+       }
+
+       /* 呼吸灯脉冲波纹效果 */
+       .marker-icon-wrapper {
+           position: relative;
+           width: 42px;
+           height: 42px;
+           background: rgba(15, 23, 42, 0.85);
+           border: 2px solid var(--accent-color);
+           border-radius: 50%;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           font-size: 1.3rem;
+           box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+       }
+
+       .marker-icon-wrapper::before,
+       .marker-icon-wrapper::after {
+           content: '';
+           position: absolute;
+           top: 50%;
+           left: 50%;
+           width: 100%;
+           height: 100%;
+           border-radius: 50%;
+           background-color: var(--accent-color);
+           transform: translate(-50%, -50%);
+           z-index: -1;
+           opacity: 0.6;
+           animation: pulseWave 2.5s infinite ease-out;
+       }
+
+       .marker-icon-wrapper::after {
+           animation-delay: 1.25s;
+       }
+
+       @keyframes pulseWave {
+           0% {
+               width: 100%;
+               height: 100%;
+               opacity: 0.8;
+           }
+           100% {
+               width: 250%;
+               height: 250%;
+               opacity: 0;
+           }
+       }
+
+       /* 中英文地区名标牌 */
+       .marker-label {
+           margin-top: 6px;
+           background: rgba(11, 15, 25, 0.9);
+           border: 1px solid var(--border-color);
+           padding: 4px 10px;
+           border-radius: 12px;
+           text-align: center;
+           white-space: nowrap;
+           backdrop-filter: blur(6px);
+           pointer-events: none;
+       }
+
+       .marker-label .en-name {
+           font-size: 0.85rem;
+           font-weight: 600;
+           color: var(--text-primary);
+           display: block;
+           line-height: 1.2;
+       }
+
+       .marker-label .cn-name {
+           font-size: 0.75rem;
+           color: var(--accent-color);
+           display: block;
+           line-height: 1.2;
+       }
+
+       /* 隐藏的详细介绍面板 (点击地标后跳出) */
+       .project-detail-modal {
+           display: none;
+           margin-top: 2rem;
+           animation: fadeIn 0.4s ease;
+       }
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(10px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+   </style>
+</head>
+<body>
+   <header>
+       <nav class="navbar">
+           <div class="logo"><a href="index.html">Jack's Portfolio</a></div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html">About</a></li>
+               <li><a href="projects.html" class="active">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <main class="page-container" style="max-width: 1100px;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+           <h1>Global Projects Map</h1>
+           <a href="projects.html" class="btn btn-outline">← Back to Projects</a>
+       </div>
+       <p class="contact-subtitle">Click on any landmark marker across the map to view the project details in that region.</p>
+
+       <!-- 世界地图与区域标记 -->
+       <div class="map-wrapper">
+           <!-- 矢量黑深色世界地图图片 -->
+           <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" alt="World Map" class="world-map-img">
+
+           <!-- 标记 1: 纽约 / New York (自由女神像 🗽) -->
+           <div class="map-marker" style="top: 38%; left: 26%;" onclick="showProject('newyork')">
+               <div class="marker-icon-wrapper">🗽</div>
+               <div class="marker-label">
+                   <span class="en-name">New York</span>
+                   <span class="cn-name">纽约</span>
+               </div>
+           </div>
+
+           <!-- 标记 2: 伦敦 / London (大本钟 🕰️) -->
+           <div class="map-marker" style="top: 28%; left: 47%;" onclick="showProject('london')">
+               <div class="marker-icon-wrapper">🕰️</div>
+               <div class="marker-label">
+                   <span class="en-name">London</span>
+                   <span class="cn-name">伦敦</span>
+               </div>
+           </div>
+
+           <!-- 标记 3: 北京 / Beijing (长城/古建 🏯) -->
+           <div class="map-marker" style="top: 36%; left: 79%;" onclick="showProject('beijing')">
+               <div class="marker-icon-wrapper">🏯</div>
+               <div class="marker-label">
+                   <span class="en-name">Beijing</span>
+                   <span class="cn-name">北京</span>
+               </div>
+           </div>
+
+           <!-- 标记 4: 东京 / Tokyo (富士山 🗻) -->
+           <div class="map-marker" style="top: 38%; left: 86%;" onclick="showProject('tokyo')">
+               <div class="marker-icon-wrapper">🗻</div>
+               <div class="marker-label">
+                   <span class="en-name">Tokyo</span>
+                   <span class="cn-name">东京</span>
+               </div>
+           </div>
+       </div>
+
+       <!-- 项目详情展示卡片 (点击地图图标后动态显示) -->
+       <div id="project-detail" class="info-card project-detail-modal">
+           <h3 id="project-title" style="color: var(--accent-color); font-size: 1.5rem;">Select a region on the map</h3>
+           <p id="project-desc" style="margin: 1rem 0;">Click any landmark marker on the map above to load project information.</p>
+           <div class="project-links">
+               <a id="project-demo" href="#" target="_blank" class="btn">View Live Demo</a>
+               <a id="project-code" href="#" target="_blank" class="btn btn-outline">Source Code</a>
+           </div>
+       </div>
+   </main>
+
+   <footer>
+       <p>© 2026 Jack. All rights reserved.</p>
+   </footer>
+
+   <!-- 项目数据与交互逻辑 -->
+   <script>
+       // 各地区项目配置数据
+       const projectData = {
+           newyork: {
+               title: "🗽 New York Project: FinTech Dashboard",
+               desc: "A real-time financial trading analytics system built for Wall Street clients using React and WebSocket.",
+               demo: "https://example.com/ny-demo",
+               code: "https://github.com/kewuan-lyk/ny-project"
+           },
+           london: {
+               title: "🕰️ London Project: Heritage Data Visualizer",
+               desc: "An interactive timeline and map interface displaying historical archives of UK landmarks.",
+               demo: "https://example.com/london-demo",
+               code: "https://github.com/kewuan-lyk/london-project"
+           },
+           beijing: {
+               title: "🏯 Beijing Project: Smart City IoT Platform",
+               desc: "A large-scale urban transit monitoring system using WebSockets, Vue, and GIS mapping.",
+               demo: "https://example.com/beijing-demo",
+               code: "https://github.com/kewuan-lyk/beijing-project"
+           },
+           tokyo: {
+               title: "🗻 Tokyo Project: Interactive Manga Reader",
+               desc: "A high-performance WebGL-based digital content reader with dynamic canvas rendering.",
+               demo: "https://example.com/tokyo-demo",
+               code: "https://github.com/kewuan-lyk/tokyo-project"
+           }
+       };
+
+       function showProject(regionKey) {
+           const data = projectData[regionKey];
+           if (!data) return;
+
+           const modal = document.getElementById('project-detail');
+           document.getElementById('project-title').innerText = data.title;
+           document.getElementById('project-desc').innerText = data.desc;
+           document.getElementById('project-demo').href = data.demo;
+           document.getElementById('project-code').href = data.code;
+
+           modal.style.display = 'block';
+           modal.scrollIntoView({ behavior: 'smooth' });
+       }
+   </script>
+</body>
+</html>
+
+二、 如何微调地标位置或增加地区？
+1. 调整百分比坐标： 在 .map-marker 的 style="top: 38%; left: 79%;" 中，top 代表纬度位置（越往下值越大），left 代表经度位置（越往右值越大）。通过微调这两个百分比即可精确平移光标。
+2. 更换地标： 你可以把光标内部的 Emoji（如 🗽, 🏯, 🕰️, 🗻）替换为任何你喜欢的 SVG 图标、图片或 Emoji。
+3. 增加/删除地点： 直接复制一份 <div class="map-marker">...</div> 并在 JavaScript 的 projectData 中加上对应的文字介绍即可！
+________________
+
+
+User prompt: 1.我想要做五彩的世界地图(陆地上是绿色黄色为主，然后海是天蓝色)2.我做的项目是在杭州一个，川西藏区一个，阿拉斯加一个，广东一个
+Response: 收到！我们来把世界地图换成五彩的视觉风格（天蓝色海洋 + 绿黄渐变/交织的大陆板块），并将你的 4 个真实项目地点（杭州、川西藏区、广东、阿拉斯加）精准标注上去。
+一、 核心改动点
+1. 地图颜色升级：使用自带颜色样式的 SVG 矢量地图（天蓝色海洋背景 #38bdf8，陆地采用生动的绿/黄渐变色与深色底色融合）。
+2. 4 个专属项目地点与对应地标：
+   * 杭州 (Hangzhou)：西湖/雷峰塔 ⛩️
+   * 川西藏区 (Western Sichuan)：雪山/高原 🏔️
+   * 广东 (Guangdong)：小蛮腰/都市 🏙️
+   * 阿拉斯加 (Alaska)：极光/雪原 ❄️
+3. 坐标精准定位：针对这 4 个地点重新调整了地图百分比坐标。
+二、 projectp1.html 完整更新代码
+你可以直接全选复制以下代码替换你的 projectp1.html：
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Part 1: Global Projects Map | Jack</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+       /* ==========================================================================
+          1. 五彩世界地图与海陆配色
+          ========================================================================== */
+       .map-wrapper {
+           position: relative;
+           width: 100%;
+           max-width: 1000px;
+           margin: 2rem auto;
+           border-radius: 20px;
+           overflow: hidden;
+           border: 2px solid rgba(255, 255, 255, 0.15);
+           /* 天蓝色海洋背景 */
+           background-color: #0284c7; 
+           box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+       }
+
+       /* 地图图片与陆地颜色控制 */
+       .world-map-img {
+           width: 100%;
+           height: auto;
+           display: block;
+           /* 使用 CSS Filter 把地图底色转为自然绿/黄交织色 */
+           filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.3)) hue-rotate(60deg) saturate(1.8) brightness(1.1);
+       }
+
+       /* 海洋水波纹渐变叠加 */
+       .map-wrapper::before {
+           content: '';
+           position: absolute;
+           top: 0; left: 0; right: 0; bottom: 0;
+           background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.2), rgba(2, 132, 199, 0.6));
+           pointer-events: none;
+           z-index: 1;
+       }
+
+       /* ==========================================================================
+          2. 动态光标与呼吸灯波纹
+          ========================================================================== */
+       .map-marker {
+           position: absolute;
+           transform: translate(-50%, -50%);
+           cursor: pointer;
+           z-index: 10;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+       }
+
+       .map-marker:hover {
+           transform: translate(-50%, -50%) scale(1.2);
+           z-index: 30;
+       }
+
+       .marker-icon-wrapper {
+           position: relative;
+           width: 44px;
+           height: 44px;
+           background: rgba(15, 23, 42, 0.88);
+           border: 2px solid #fde047; /* 鲜明黄边框 */
+           border-radius: 50%;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           font-size: 1.3rem;
+           box-shadow: 0 0 15px rgba(253, 224, 71, 0.6);
+       }
+
+       /* 呼吸灯脉冲效果 */
+       .marker-icon-wrapper::before,
+       .marker-icon-wrapper::after {
+           content: '';
+           position: absolute;
+           top: 50%; left: 50%;
+           width: 100%; height: 100%;
+           border-radius: 50%;
+           background-color: #fde047;
+           transform: translate(-50%, -50%);
+           z-index: -1;
+           opacity: 0.7;
+           animation: pulseWave 2.4s infinite ease-out;
+       }
+
+       .marker-icon-wrapper::after {
+           animation-delay: 1.2s;
+       }
+
+       @keyframes pulseWave {
+           0% { width: 100%; height: 100%; opacity: 0.8; }
+           100% { width: 260%; height: 260%; opacity: 0; }
+       }
+
+       /* 中英文地区名标牌 */
+       .marker-label {
+           margin-top: 6px;
+           background: rgba(15, 23, 42, 0.92);
+           border: 1px solid rgba(255, 255, 255, 0.2);
+           padding: 4px 10px;
+           border-radius: 12px;
+           text-align: center;
+           white-space: nowrap;
+           backdrop-filter: blur(6px);
+           box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+       }
+
+       .marker-label .en-name {
+           font-size: 0.85rem;
+           font-weight: 700;
+           color: #ffffff;
+           display: block;
+           line-height: 1.2;
+       }
+
+       .marker-label .cn-name {
+           font-size: 0.75rem;
+           font-weight: 600;
+           color: #fde047; /* 醒目黄色 */
+           display: block;
+           line-height: 1.2;
+       }
+
+       /* ==========================================================================
+          3. 项目详情卡片
+          ========================================================================== */
+       .project-detail-modal {
+           display: none;
+           margin-top: 2rem;
+           animation: fadeIn 0.4s ease-out;
+       }
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(12px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+   </style>
+</head>
+<body>
+   <header>
+       <nav class="navbar">
+           <div class="logo"><a href="index.html">Jack's Portfolio</a></div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html">About</a></li>
+               <li><a href="projects.html" class="active">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <main class="page-container" style="max-width: 1100px;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+           <h1>Part 1: Regional Projects</h1>
+           <a href="projects.html" class="btn btn-outline">← Back to Projects</a>
+       </div>
+       <p class="contact-subtitle">Click on any project marker on the colorful map below to explore details.</p>
+
+       <!-- 地图容器 -->
+       <div class="map-wrapper">
+           <!-- 矢量彩色世界地图 SVG 背景 -->
+           <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" alt="World Map" class="world-map-img">
+
+           <!-- 1. 杭州 / Hangzhou (⛩️ 西湖/古建) -->
+           <div class="map-marker" style="top: 44.5%; left: 81.5%;" onclick="showProject('hangzhou')">
+               <div class="marker-icon-wrapper">⛩️</div>
+               <div class="marker-label">
+                   <span class="en-name">Hangzhou</span>
+                   <span class="cn-name">杭州</span>
+               </div>
+           </div>
+
+           <!-- 2. 川西藏区 / Western Sichuan (🏔️ 藏区雪山) -->
+           <div class="map-marker" style="top: 42%; left: 75.5%;" onclick="showProject('sichuan')">
+               <div class="marker-icon-wrapper">🏔️</div>
+               <div class="marker-label">
+                   <span class="en-name">W. Sichuan</span>
+                   <span class="cn-name">川西藏区</span>
+               </div>
+           </div>
+
+           <!-- 3. 广东 / Guangdong (🏙️ 小蛮腰/都市) -->
+           <div class="map-marker" style="top: 48%; left: 79.5%;" onclick="showProject('guangdong')">
+               <div class="marker-icon-wrapper">🏙️</div>
+               <div class="marker-label">
+                   <span class="en-name">Guangdong</span>
+                   <span class="cn-name">广东</span>
+               </div>
+           </div>
+
+           <!-- 4. 阿拉斯加 / Alaska (❄️ 极光雪原) -->
+           <div class="map-marker" style="top: 18%; left: 14%;" onclick="showProject('alaska')">
+               <div class="marker-icon-wrapper">❄️</div>
+               <div class="marker-label">
+                   <span class="en-name">Alaska</span>
+                   <span class="cn-name">阿拉斯加</span>
+               </div>
+           </div>
+       </div>
+
+       <!-- 项目详情展示区 (点击后显示) -->
+       <div id="project-detail" class="info-card project-detail-modal">
+           <h3 id="project-title" style="color: var(--accent-color); font-size: 1.5rem;">Select a marker on the map</h3>
+           <p id="project-desc" style="margin: 1rem 0;">Click any landmark pin above to load project information.</p>
+           <div class="project-links">
+               <a id="project-demo" href="#" target="_blank" class="btn">Live Demo / Overview</a>
+               <a id="project-code" href="#" target="_blank" class="btn btn-outline">Source Code / Doc</a>
+           </div>
+       </div>
+   </main>
+
+   <footer>
+       <p>© 2026 Jack. All rights reserved.</p>
+   </footer>
+
+   <!-- 项目数据定义 -->
+   <script>
+       const projectData = {
+           hangzhou: {
+               title: "⛩️ 杭州项目 (Hangzhou Project)",
+               desc: "位于中国杭州的智慧城市/水乡文化前端互动平台，结合了西湖与江南风情要素。",
+               demo: "#",
+               code: "#"
+           },
+           sichuan: {
+               title: "🏔️ 川西藏区项目 (Western Sichuan Project)",
+               desc: "针对川西高原藏区地理/旅游/文化数字化的特化开发项目，注重离线体验与多语言适配。",
+               demo: "#",
+               code: "#"
+           },
+           guangdong: {
+               title: "🏙️ 广东项目 (Guangdong Project)",
+               desc: "面向大湾区的现代商业应用开发，包含高性能 API 数据对接与可视化交互大屏。",
+               demo: "#",
+               code: "#"
+           },
+           alaska: {
+               title: "❄️ 阿拉斯加项目 (Alaska Project)",
+               desc: "极地环境监测/极光数据可视化系统，处理高纬度遥感数据并支持 WebGL 绘制。",
+               demo: "#",
+               code: "#"
+           }
+       };
+
+       function showProject(regionKey) {
+           const data = projectData[regionKey];
+           if (!data) return;
+
+           const modal = document.getElementById('project-detail');
+           document.getElementById('project-title').innerText = data.title;
+           document.getElementById('project-desc').innerText = data.desc;
+           document.getElementById('project-demo').href = data.demo;
+           document.getElementById('project-code').href = data.code;
+
+           modal.style.display = 'block';
+           modal.scrollIntoView({ behavior: 'smooth' });
+       }
+   </script>
+</body>
+</html>
+
+________________
+
+
+User prompt: 现在来做project2的部分，我想要一个小行星带的切片的感觉：一个屏幕，很多陨石从上往下慢慢飘过；大部分都是小陨石，无交互；有几颗大陨石，他们是可以交互的项目(大陨石的数量可根据项目数量后期调节)。目前只有一颗大陨石是有内容的，鼠标移动到大陨石上面这颗陨石会停止移动，然后会显示出项目名称。这个目前唯一的项目是我这个portfolio，点击这颗陨石会跳转我的home界面
+Response: 这个设计非常有创意！完美契合了太阳系主题中点击“小行星带”跳转进来的设定。
+我们可以使用 2D Canvas 动画 来实现这个“小行星带穿越/切片”的效果。
+一、 核心功能设计
+1. 背景与陨石流：生成数十颗微小陨石自上而下缓慢飘过（带有随机大小、透明度和沉浮动态）。
+2. 大陨石 (项目卡片)：
+   * 生成大型陨石（可以通过数组方便地增减数量）。
+   * 目前配置了 1 颗激活的大陨石（对应 Portfolio 网页项目）。
+   * 悬停交互：鼠标移入时大陨石会停止移动（暂停下落），并浮现带有高亮边框的项目名称 Label。
+   * 点击交互：点击这颗大陨石，触发过度动画并跳转回 index.html (Home 界面)。
+二、 projectp2.html 完整代码
+请创建一个名为 projectp2.html 的文件，填入以下完整代码：
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Part 2: Asteroid Belt Projects | Jack</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+       body {
+           overflow: hidden; /* 防止出现滚动条，保持满屏沉浸感 */
+       }
+
+       .asteroid-canvas-container {
+           position: fixed;
+           top: 0;
+           left: 0;
+           width: 100vw;
+           height: 100vh;
+           z-index: 0;
+           background-color: var(--bg-primary);
+       }
+
+       #asteroidCanvas {
+           display: block;
+           width: 100%;
+           height: 100%;
+       }
+
+       /* 覆盖在 Canvas 上的导航提示 */
+       .asteroid-overlay {
+           position: fixed;
+           top: 100px;
+           left: 50%;
+           transform: translateX(-50%);
+           text-align: center;
+           z-index: 10;
+           pointer-events: none;
+       }
+
+       .asteroid-overlay h1 {
+           font-size: 2.8rem;
+           color: #ffffff;
+           text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+           margin-bottom: 0.5rem;
+       }
+
+       .asteroid-overlay p {
+           color: var(--text-secondary);
+           font-size: 1.1rem;
+       }
+
+       .top-nav-btn {
+           position: fixed;
+           top: 90px;
+           left: 2rem;
+           z-index: 20;
+       }
+   </style>
+</head>
+<body class="home-body">
+
+   <header>
+       <nav class="navbar">
+           <div class="logo"><a href="index.html">Jack's Portfolio</a></div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html">About</a></li>
+               <li><a href="projects.html" class="active">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <!-- 返回按钮 -->
+   <a href="projects.html" class="btn btn-outline top-nav-btn">← Back to Projects</a>
+
+   <!-- 标题 overlay -->
+   <div class="asteroid-overlay">
+       <h1>Asteroid Belt Projects</h1>
+       <p>Hover over large asteroids to reveal featured projects</p>
+   </div>
+
+   <!-- 2D Canvas 容器 -->
+   <div class="asteroid-canvas-container">
+       <canvas id="asteroidCanvas"></canvas>
+   </div>
+
+   <script>
+       window.addEventListener('DOMContentLoaded', () => {
+           const canvas = document.getElementById('asteroidCanvas');
+           if (!canvas) return;
+
+           const ctx = canvas.getContext('2d');
+           let width = (canvas.width = window.innerWidth);
+           let height = (canvas.height = window.innerHeight);
+
+           window.addEventListener('resize', () => {
+               width = canvas.width = window.innerWidth;
+               height = canvas.height = window.innerHeight;
+           });
+
+           let mousePos = { x: -1000, y: -1000 };
+           let hoveredAsteroid = null;
+
+           // ==========================================
+           // 1. 无交互小陨石群 (背景流)
+           // ==========================================
+           const smallAsteroids = [];
+           const SMALL_COUNT = 120; // 小陨石数量
+
+           for (let i = 0; i < SMALL_COUNT; i++) {
+               smallAsteroids.push({
+                   x: Math.random() * width,
+                   y: Math.random() * height,
+                   radius: Math.random() * 2.5 + 0.8,
+                   speedY: Math.random() * 0.6 + 0.2, // 慢慢从上往下漂
+                   speedX: (Math.random() - 0.5) * 0.15,
+                   color: Math.random() > 0.4 ? '#94a3b8' : '#64748b',
+                   opacity: Math.random() * 0.6 + 0.3
+               });
+           }
+
+           // ==========================================
+           // 2. 大陨石 (项目卡片数据，可随时添加/调节数量)
+           // ==========================================
+           const largeAsteroids = [
+               {
+                   id: 'portfolio',
+                   title: 'Interactive 3D/2D Portfolio',
+                   subtitle: 'Click to return Home',
+                   x: width * 0.5,       // 初始居中偏上方
+                   y: height * 0.35,
+                   radius: 55,           // 大陨石尺寸
+                   speedY: 0.35,         // 下落速度
+                   targetUrl: 'index.html',
+                   color: '#38bdf8',
+                   rotation: 0,
+                   rotationSpeed: 0.005,
+                   // 不规则多边形节点（让陨石看起来像石头而非完美圆形）
+                   shapeVertices: [
+                       { angle: 0, scale: 1.1 },
+                       { angle: Math.PI * 0.3, scale: 0.85 },
+                       { angle: Math.PI * 0.6, scale: 1.05 },
+                       { angle: Math.PI * 0.9, scale: 0.9 },
+                       { angle: Math.PI * 1.2, scale: 1.15 },
+                       { angle: Math.PI * 1.5, scale: 0.95 },
+                       { angle: Math.PI * 1.8, scale: 1.02 }
+                   ]
+               }
+               /* 后期可以在这里轻松扩展更多大陨石项目：
+               ,{
+                   id: 'project2',
+                   title: 'Future Algorithm Engine',
+                   subtitle: 'Coming soon...',
+                   x: width * 0.25,
+                   y: -100,
+                   radius: 48,
+                   speedY: 0.4,
+                   targetUrl: '#',
+                   color: '#fde047',
+                   ...
+               }
+               */
+           ];
+
+           // ==========================================
+           // 3. 渲染主循环
+           // ==========================================
+           function animate() {
+               ctx.clearRect(0, 0, width, height);
+
+               // --- 绘制无交互小陨石 ---
+               smallAsteroids.forEach(p => {
+                   p.y += p.speedY;
+                   p.x += p.speedX;
+
+                   // 飘出屏幕底部后重新回到顶部
+                   if (p.y > height + 10) {
+                       p.y = -10;
+                       p.x = Math.random() * width;
+                   }
+
+                   ctx.beginPath();
+                   ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                   ctx.fillStyle = p.color;
+                   ctx.globalAlpha = p.opacity;
+                   ctx.fill();
+                   ctx.globalAlpha = 1.0;
+               });
+
+               // --- 绘制大陨石 (交互项目) ---
+               hoveredAsteroid = null;
+
+               largeAsteroids.forEach(ast => {
+                   // 碰撞/悬停检测
+                   const dist = Math.hypot(mousePos.x - ast.x, mousePos.y - ast.y);
+                   const isHovered = dist < ast.radius + 15;
+
+                   if (isHovered) {
+                       hoveredAsteroid = ast;
+                   } else {
+                       // 没悬停时正常下落和缓慢旋转
+                       ast.y += ast.speedY;
+                       ast.rotation += ast.rotationSpeed;
+
+                       // 飘出屏幕后循环回到顶部
+                       if (ast.y > height + ast.radius * 2) {
+                           ast.y = -ast.radius * 2;
+                           ast.x = Math.random() * (width - 200) + 100;
+                       }
+                   }
+
+                   // 绘制大陨石主体
+                   ctx.save();
+                   ctx.translate(ast.x, ast.y);
+                   ctx.rotate(ast.rotation);
+
+                   // 悬停高亮光晕
+                   if (isHovered) {
+                       const glowGrad = ctx.createRadialGradient(0, 0, ast.radius * 0.8, 0, 0, ast.radius + 25);
+                       glowGrad.addColorStop(0, 'rgba(56, 189, 248, 0.5)');
+                       glowGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+                       ctx.beginPath();
+                       ctx.arc(0, 0, ast.radius + 25, 0, Math.PI * 2);
+                       ctx.fillStyle = glowGrad;
+                       ctx.fill();
+                   }
+
+                   // 绘制不规则岩石形状
+                   ctx.beginPath();
+                   ast.shapeVertices.forEach((v, index) => {
+                       const r = ast.radius * v.scale;
+                       const vx = Math.cos(v.angle) * r;
+                       const vy = Math.sin(v.angle) * r;
+                       if (index === 0) ctx.moveTo(vx, vy);
+                       else ctx.lineTo(vx, vy);
+                   });
+                   ctx.closePath();
+
+                   // 岩石填充与边框
+                   ctx.fillStyle = isHovered ? '#1e293b' : '#0f172a';
+                   ctx.strokeStyle = isHovered ? '#38bdf8' : '#475569';
+                   ctx.lineWidth = isHovered ? 3 : 2;
+                   ctx.fill();
+                   ctx.stroke();
+
+                   // 陨石表面纹理凹坑
+                   ctx.fillStyle = isHovered ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.05)';
+                   ctx.beginPath();
+                   ctx.arc(-ast.radius * 0.3, -ast.radius * 0.2, ast.radius * 0.25, 0, Math.PI * 2);
+                   ctx.arc(ast.radius * 0.2, ast.radius * 0.3, ast.radius * 0.2, 0, Math.PI * 2);
+                   ctx.fill();
+
+                   ctx.restore();
+
+                   // 悬停时浮现项目名称 Title Label (在陨石右下方)
+                   if (isHovered) {
+                       drawAsteroidLabel(ast);
+                   }
+               });
+
+               requestAnimationFrame(animate);
+           }
+
+           // 绘制悬停时的项目 Label 弹窗
+           function drawAsteroidLabel(ast) {
+               const lx = ast.x + ast.radius + 15;
+               const ly = ast.y - 20;
+
+               ctx.font = 'bold 16px "Inter", sans-serif';
+               const titleWidth = ctx.measureText(ast.title).width;
+               ctx.font = '13px "Inter", sans-serif';
+               const subWidth = ctx.measureText(ast.subtitle).width;
+
+               const boxWidth = Math.max(titleWidth, subWidth) + 30;
+               const boxHeight = 56;
+
+               // 悬停框背景
+               ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+               ctx.strokeStyle = '#38bdf8';
+               ctx.lineWidth = 1.5;
+               ctx.beginPath();
+               ctx.roundRect(lx, ly, boxWidth, boxHeight, 10);
+               ctx.fill();
+               ctx.stroke();
+
+               // 标题与副标题文本
+               ctx.fillStyle = '#ffffff';
+               ctx.font = 'bold 15px "Inter", sans-serif';
+               ctx.fillText(ast.title, lx + 15, ly + 24);
+
+               ctx.fillStyle = '#38bdf8';
+               ctx.font = '13px "Inter", sans-serif';
+               ctx.fillText(ast.subtitle, lx + 15, ly + 44);
+           }
+
+           // ==========================================
+           // 4. 事件监听 (鼠标移动与点击)
+           // ==========================================
+           canvas.addEventListener('mousemove', (e) => {
+               const rect = canvas.getBoundingClientRect();
+               mousePos.x = e.clientX - rect.left;
+               mousePos.y = e.clientY - rect.top;
+
+               // 悬停在有交互的大陨石上时改变鼠标手势
+               if (hoveredAsteroid) {
+                   canvas.style.cursor = 'pointer';
+               } else {
+                   canvas.style.cursor = 'default';
+               }
+           });
+
+           canvas.addEventListener('click', () => {
+               if (hoveredAsteroid && hoveredAsteroid.targetUrl) {
+                   // 点击后平滑跳转
+                   window.location.href = hoveredAsteroid.targetUrl;
+               }
+           });
+
+           animate();
+       });
+   </script>
+</body>
+</html>
+
+三、 后期如何添加更多大陨石项目？
+当你在 Part 2 增加了新项目时，只需在代码里的 largeAsteroids 数组中增加一个对象即可：
+largeAsteroids.push({
+   id: 'my-new-project',
+   title: '你的新项目名称',
+   subtitle: 'Click to View',
+   x: width * 0.7,        // 初始水平位置
+   y: -150,               // 从顶部屏幕上方开始下落
+   radius: 50,            // 尺寸
+   speedY: 0.3,           // 下落速度
+   targetUrl: 'xxx.html', // 点击后的跳转地址
+   rotation: 0,
+   rotationSpeed: 0.004,
+   shapeVertices: [...]   // 多边形凹凸形状
+});
+
+________________
+
+
+User prompt: 1.project1部分的项目展示不用source code；2.我希望在我的网站，鼠标光标会变成一个小火箭，如果遇到了可交互的项目火箭会喷射火焰；3.我希望把左上角Jack'Portfolio部分做成点开之后会有一个交互面板，有如下几个功能：目前先做一个dark mode
+Response: 没问题！这三个需求都非常符合你网站的“宇宙/星空”主题，实现起来也非常优雅。
+一、 修改要点说明
+1. 移除 Source Code 按钮：在 projectp1.html 中删除了源码按钮，仅保留 Live Demo / Overview。
+2. 火箭光标与喷火交互 (Rocket Cursor)：
+   * 隐藏默认鼠标指针，使用动态 SVG/HTML 跟随鼠标。
+   * 默认状态下是一个斜向上的小火箭。
+   * 当鼠标移入任何可交互元素（如按钮、链接、地图 Marker、可点击大陨石）时，火箭尾部会自动喷出动态火焰并微微放大。
+3. 左上角 Logo 点击开启交互控制面板 (Control Panel)：
+   * 点击左上角 Jack's Portfolio 文本或图标，会以极具科技感的方式弹出一个控制面板。
+   * Dark Mode 切换：面板内置一个切换开关，可实时在“深色宇宙模式 (Dark Mode)”与“浅色星云模式 (Light Mode)”之间切换，系统会自动记忆用户的选择（LocalStorage）。
+二、 火箭光标与控制面板核心代码
+请将以下 CSS 样式 和 JavaScript 逻辑 追加到你的通用样式文件 style.css 和全局脚本中（或者在 index.html、projectp1.html、projectp2.html 中引入）：
+1. 全局 CSS 追加 (style.css)
+/* ==========================================================================
+  1. 自定义火箭光标 (Rocket Cursor)
+  ========================================================================== */
+/* 隐藏原生鼠标 */
+body, a, button, [role="button"], .map-marker {
+   cursor: none !important;
+}
+
+.custom-rocket-cursor {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 32px;
+   height: 32px;
+   pointer-events: none;
+   z-index: 9999;
+   transform: translate(-50%, -50%) rotate(-45deg); /* 火箭向上偏转 */
+   transition: transform 0.15s ease-out;
+}
+
+.rocket-svg {
+   width: 100%;
+   height: 100%;
+   filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
+}
+
+/* 火箭喷火效果 (Hover 悬停时激活) */
+.rocket-flame {
+   opacity: 0;
+   transform-origin: top center;
+   transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.custom-rocket-cursor.hovering {
+   transform: translate(-50%, -50%) rotate(-45deg) scale(1.25);
+}
+
+.custom-rocket-cursor.hovering .rocket-flame {
+   opacity: 1;
+   animation: flameFlicker 0.15s infinite alternate ease-in-out;
+}
+
+@keyframes flameFlicker {
+   0% { transform: scaleY(0.8) scaleX(0.9); }
+   100% { transform: scaleY(1.3) scaleX(1.1); }
+}
+
+/* ==========================================================================
+  2. 左上角 Logo 交互控制面板 (Control Panel)
+  ========================================================================== */
+.logo-btn {
+   background: none;
+   border: none;
+   font-size: 1.25rem;
+   font-weight: 700;
+   color: var(--accent-color, #38bdf8);
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   transition: transform 0.2s ease;
+}
+
+.logo-btn:hover {
+   transform: scale(1.05);
+}
+
+/* 控制面板弹窗 */
+.control-panel-modal {
+   display: none;
+   position: fixed;
+   top: 75px;
+   left: 2rem;
+   width: 260px;
+   background: rgba(15, 23, 42, 0.95);
+   border: 1px solid rgba(56, 189, 248, 0.4);
+   border-radius: 16px;
+   padding: 1.25rem;
+   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+   backdrop-filter: blur(12px);
+   z-index: 1000;
+   animation: panelSlideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes panelSlideDown {
+   from { opacity: 0; transform: translateY(-15px); }
+   to { opacity: 1; transform: translateY(0); }
+}
+
+.panel-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+   padding-bottom: 0.5rem;
+   margin-bottom: 1rem;
+}
+
+.panel-header h4 {
+   margin: 0;
+   font-size: 1rem;
+   color: #ffffff;
+}
+
+.panel-item {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 0.75rem;
+}
+
+.panel-item span {
+   font-size: 0.9rem;
+   color: #94a3b8;
+}
+
+/* 开关 Toggle 样式 */
+.switch {
+   position: relative;
+   display: inline-block;
+   width: 44px;
+   height: 22px;
+}
+
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+   position: absolute;
+   cursor: pointer;
+   top: 0; left: 0; right: 0; bottom: 0;
+   background-color: #475569;
+   transition: .3s;
+   border-radius: 22px;
+}
+
+.slider:before {
+   position: absolute;
+   content: "";
+   height: 16px; width: 16px;
+   left: 3px; bottom: 3px;
+   background-color: white;
+   transition: .3s;
+   border-radius: 50%;
+}
+
+input:checked + .slider { background-color: #38bdf8; }
+input:checked + .slider:before { transform: translateX(22px); }
+
+/* 浅色主题 override */
+body.light-mode {
+   --bg-primary: #f8fafc;
+   --bg-secondary: #ffffff;
+   --text-primary: #0f172a;
+   --text-secondary: #475569;
+   --border-color: #cbd5e1;
+   background-color: #f1f5f9;
+   color: #0f172a;
+}
+
+2. 全局 DOM 节点与 HTML 模版
+请将导航栏中的 Logo 部分替换为带控制面板的按钮，并在 HTML 的 </body> 前加入火箭光标与面板的 HTML：
+<!-- 1. 导航栏中的 Logo 改造 (替换原来的 .logo 节点) -->
+<div class="logo">
+   <button id="logoControlBtn" class="logo-btn">
+       🚀 Jack's Portfolio
+   </button>
+</div>
+
+<!-- 2. 左上角控制面板弹窗 -->
+<div id="controlPanel" class="control-panel-modal">
+   <div class="panel-header">
+       <h4>⚙️ Command Center</h4>
+   </div>
+   <div class="panel-item">
+       <span>Dark Mode (深色模式)</span>
+       <label class="switch">
+           <input type="checkbox" id="darkModeToggle" checked>
+           <span class="slider"></span>
+       </label>
+   </div>
+</div>
+
+<!-- 3. 自定义火箭光标 DOM (包含矢量火箭与喷火 SVG) -->
+<div id="rocketCursor" class="custom-rocket-cursor">
+   <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+       <!-- 火箭喷出的火焰 -->
+       <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+       <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+       <!-- 火箭机身与机翼 -->
+       <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+       <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+       <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+       <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+       <!-- 舷窗 -->
+       <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+   </svg>
+</div>
+
+3. JavaScript 逻辑 (光标跟随 + 面板开关 + Dark Mode)
+将以下 JS 代码放入你的通用 .js 文件中：
+document.addEventListener('DOMContentLoaded', () => {
+   // ==========================================
+   // 1. 火箭光标跟随与喷火交互
+   // ==========================================
+   const rocket = document.getElementById('rocketCursor');
+
+   if (rocket) {
+       window.addEventListener('mousemove', (e) => {
+           rocket.style.left = `${e.clientX}px`;
+           rocket.style.top = `${e.clientY}px`;
+       });
+
+       // 监听可交互元素，触发火焰喷射
+       const interactiveSelector = 'a, button, .map-marker, input, .switch, [role="button"]';
+       
+       document.addEventListener('mouseover', (e) => {
+           if (e.target.closest(interactiveSelector)) {
+               rocket.classList.add('hovering');
+           }
+       });
+
+       document.addEventListener('mouseout', (e) => {
+           if (e.target.closest(interactiveSelector)) {
+               rocket.classList.remove('hovering');
+           }
+       });
+   }
+
+   // ==========================================
+   // 2. 左上角 Logo 面板与 Dark Mode 切换
+   // ==========================================
+   const logoBtn = document.getElementById('logoControlBtn');
+   const controlPanel = document.getElementById('controlPanel');
+   const darkModeToggle = document.getElementById('darkModeToggle');
+
+   // 展开 / 隐藏控制面板
+   if (logoBtn && controlPanel) {
+       logoBtn.addEventListener('click', (e) => {
+           e.stopPropagation();
+           const isVisible = controlPanel.style.display === 'block';
+           controlPanel.style.display = isVisible ? 'none' : 'block';
+       });
+
+       // 点击页面其他区域自动收起面板
+       document.addEventListener('click', (e) => {
+           if (!controlPanel.contains(e.target) && e.target !== logoBtn) {
+               controlPanel.style.display = 'none';
+           }
+       });
+   }
+
+   // Dark Mode 状态初始化与切换
+   const savedTheme = localStorage.getItem('theme');
+   if (savedTheme === 'light') {
+       document.body.classList.add('light-mode');
+       if (darkModeToggle) darkModeToggle.checked = false;
+   }
+
+   if (darkModeToggle) {
+       darkModeToggle.addEventListener('change', (e) => {
+           if (e.target.checked) {
+               document.body.classList.remove('light-mode');
+               localStorage.setItem('theme', 'dark');
+           } else {
+               document.body.classList.add('light-mode');
+               localStorage.setItem('theme', 'light');
+           }
+       });
+   }
+});
+
+三、 更新后的 projectp1.html (已移除 Source Code 按钮)
+项目卡片部分已删除了 Source Code 链接，只保留一个 Live Demo 按钮：
+<!-- 项目详情展示区 (已移除 Source Code 按钮) -->
+<div id="project-detail" class="info-card project-detail-modal">
+   <h3 id="project-title" style="color: var(--accent-color); font-size: 1.5rem;">Select a marker on the map</h3>
+   <p id="project-desc" style="margin: 1rem 0;">Click any landmark pin above to load project information.</p>
+   <div class="project-links">
+       <a id="project-demo" href="#" target="_blank" class="btn">Live Demo / Overview</a>
+   </div>
+</div>
+
+________________
+
+
+User prompt: 给我完整的project1和index
+Response: 这里是整理好的完整版 index.html 与 projectp1.html，代码中已包含火箭光标（悬停喷火）、左上角 Logo 控制面板（Dark/Light Mode 切换）以及移除源码按钮后的地图交互系统。
+一、 完整 index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Jack's Solar Portfolio</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+       body {
+           margin: 0;
+           overflow: hidden;
+           background-color: #030712;
+           color: #ffffff;
+           font-family: 'Inter', system-ui, -apple-system, sans-serif;
+       }
+
+       #solarCanvas {
+           display: block;
+           width: 100vw;
+           height: 100vh;
+       }
+
+       .back-btn {
+           position: fixed;
+           bottom: 2rem;
+           left: 2rem;
+           z-index: 100;
+           padding: 10px 20px;
+           background: rgba(15, 23, 42, 0.8);
+           border: 1px solid var(--accent-color, #38bdf8);
+           color: #fff;
+           border-radius: 8px;
+           cursor: pointer;
+           backdrop-filter: blur(8px);
+           transition: all 0.3s ease;
+       }
+
+       .back-btn.hidden {
+           display: none;
+       }
+
+       .back-btn:hover {
+           background: var(--accent-color, #38bdf8);
+           color: #000;
+       }
+   </style>
+</head>
+<body>
+
+   <header style="position: fixed; top: 0; left: 0; width: 100%; z-index: 100;">
+       <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;">
+           <!-- 左上角可点击 Logo -->
+           <div class="logo">
+               <button id="logoControlBtn" class="logo-btn">
+                   🚀 Jack's Portfolio
+               </button>
+           </div>
+           <ul class="nav-links" style="display: flex; gap: 1.5rem; list-style: none; margin: 0;">
+               <li><a href="index.html" class="active">Home</a></li>
+               <li><a href="about.html" id="nav-about">About</a></li>
+               <li><a href="projects.html" id="nav-projects">Projects</a></li>
+               <li><a href="contact.html" id="nav-contact">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <!-- 左上角控制面板 -->
+   <div id="controlPanel" class="control-panel-modal">
+       <div class="panel-header">
+           <h4>⚙️ Command Center</h4>
+       </div>
+       <div class="panel-item">
+           <span>Dark Mode (深色模式)</span>
+           <label class="switch">
+               <input type="checkbox" id="darkModeToggle" checked>
+               <span class="slider"></span>
+           </label>
+       </div>
+   </div>
+
+   <!-- 太阳系主 Canvas -->
+   <canvas id="solarCanvas"></canvas>
+
+   <!-- 返回太阳系视图按钮 -->
+   <button id="backToSolarBtn" class="back-btn hidden">← Back to Solar System</button>
+
+   <!-- 自定义火箭光标 -->
+   <div id="rocketCursor" class="custom-rocket-cursor">
+       <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+           <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+           <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+           <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+           <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+           <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+           <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+       </svg>
+   </div>
+
+   <script src="javascript.js"></script>
+   <script>
+       // 火箭光标与控制面板全局逻辑
+       document.addEventListener('DOMContentLoaded', () => {
+           const rocket = document.getElementById('rocketCursor');
+           if (rocket) {
+               window.addEventListener('mousemove', (e) => {
+                   rocket.style.left = `${e.clientX}px`;
+                   rocket.style.top = `${e.clientY}px`;
+               });
+
+               const interactiveSelector = 'a, button, .map-marker, input, .switch, [role="button"]';
+               document.addEventListener('mouseover', (e) => {
+                   if (e.target.closest(interactiveSelector)) rocket.classList.add('hovering');
+               });
+               document.addEventListener('mouseout', (e) => {
+                   if (e.target.closest(interactiveSelector)) rocket.classList.remove('hovering');
+               });
+           }
+
+           const logoBtn = document.getElementById('logoControlBtn');
+           const controlPanel = document.getElementById('controlPanel');
+           const darkModeToggle = document.getElementById('darkModeToggle');
+
+           if (logoBtn && controlPanel) {
+               logoBtn.addEventListener('click', (e) => {
+                   e.stopPropagation();
+                   const isVisible = controlPanel.style.display === 'block';
+                   controlPanel.style.display = isVisible ? 'none' : 'block';
+               });
+
+               document.addEventListener('click', (e) => {
+                   if (!controlPanel.contains(e.target) && e.target !== logoBtn) {
+                       controlPanel.style.display = 'none';
+                   }
+               });
+           }
+
+           const savedTheme = localStorage.getItem('theme');
+           if (savedTheme === 'light') {
+               document.body.classList.add('light-mode');
+               if (darkModeToggle) darkModeToggle.checked = false;
+           }
+
+           if (darkModeToggle) {
+               darkModeToggle.addEventListener('change', (e) => {
+                   if (e.target.checked) {
+                       document.body.classList.remove('light-mode');
+                       localStorage.setItem('theme', 'dark');
+                   } else {
+                       document.body.classList.add('light-mode');
+                       localStorage.setItem('theme', 'light');
+                   }
+               });
+           }
+       });
+   </script>
+</body>
+</html>
+
+二、 完整 projectp1.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Part 1: Regional Projects Map | Jack</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+       /* 五彩世界地图与海陆配色 */
+       .map-wrapper {
+           position: relative;
+           width: 100%;
+           max-width: 1000px;
+           margin: 2rem auto;
+           border-radius: 20px;
+           overflow: hidden;
+           border: 2px solid rgba(255, 255, 255, 0.15);
+           background-color: #0284c7; /* 天蓝色海洋 */
+           box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+       }
+
+       .world-map-img {
+           width: 100%;
+           height: auto;
+           display: block;
+           filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.3)) hue-rotate(60deg) saturate(1.8) brightness(1.1);
+       }
+
+       .map-wrapper::before {
+           content: '';
+           position: absolute;
+           top: 0; left: 0; right: 0; bottom: 0;
+           background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.2), rgba(2, 132, 199, 0.6));
+           pointer-events: none;
+           z-index: 1;
+       }
+
+       /* 动态光标与呼吸灯 */
+       .map-marker {
+           position: absolute;
+           transform: translate(-50%, -50%);
+           cursor: pointer;
+           z-index: 10;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+       }
+
+       .map-marker:hover {
+           transform: translate(-50%, -50%) scale(1.2);
+           z-index: 30;
+       }
+
+       .marker-icon-wrapper {
+           position: relative;
+           width: 44px;
+           height: 44px;
+           background: rgba(15, 23, 42, 0.88);
+           border: 2px solid #fde047;
+           border-radius: 50%;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           font-size: 1.3rem;
+           box-shadow: 0 0 15px rgba(253, 224, 71, 0.6);
+       }
+
+       .marker-icon-wrapper::before,
+       .marker-icon-wrapper::after {
+           content: '';
+           position: absolute;
+           top: 50%; left: 50%;
+           width: 100%; height: 100%;
+           border-radius: 50%;
+           background-color: #fde047;
+           transform: translate(-50%, -50%);
+           z-index: -1;
+           opacity: 0.7;
+           animation: pulseWave 2.4s infinite ease-out;
+       }
+
+       .marker-icon-wrapper::after {
+           animation-delay: 1.2s;
+       }
+
+       @keyframes pulseWave {
+           0% { width: 100%; height: 100%; opacity: 0.8; }
+           100% { width: 260%; height: 260%; opacity: 0; }
+       }
+
+       .marker-label {
+           margin-top: 6px;
+           background: rgba(15, 23, 42, 0.92);
+           border: 1px solid rgba(255, 255, 255, 0.2);
+           padding: 4px 10px;
+           border-radius: 12px;
+           text-align: center;
+           white-space: nowrap;
+           backdrop-filter: blur(6px);
+           box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+       }
+
+       .marker-label .en-name {
+           font-size: 0.85rem;
+           font-weight: 700;
+           color: #ffffff;
+           display: block;
+           line-height: 1.2;
+       }
+
+       .marker-label .cn-name {
+           font-size: 0.75rem;
+           font-weight: 600;
+           color: #fde047;
+           display: block;
+           line-height: 1.2;
+       }
+
+       .project-detail-modal {
+           display: none;
+           margin-top: 2rem;
+           animation: fadeIn 0.4s ease-out;
+       }
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(12px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+   </style>
+</head>
+<body>
+   <header>
+       <nav class="navbar">
+           <div class="logo">
+               <button id="logoControlBtn" class="logo-btn">
+                   🚀 Jack's Portfolio
+               </button>
+           </div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html">About</a></li>
+               <li><a href="projects.html" class="active">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <!-- 控制面板弹窗 -->
+   <div id="controlPanel" class="control-panel-modal">
+       <div class="panel-header">
+           <h4>⚙️ Command Center</h4>
+       </div>
+       <div class="panel-item">
+           <span>Dark Mode (深色模式)</span>
+           <label class="switch">
+               <input type="checkbox" id="darkModeToggle" checked>
+               <span class="slider"></span>
+           </label>
+       </div>
+   </div>
+
+   <main class="page-container" style="max-width: 1100px; margin: 80px auto 2rem;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+           <h1>Part 1: Regional Projects</h1>
+           <a href="projects.html" class="btn btn-outline">← Back to Projects</a>
+       </div>
+       <p class="contact-subtitle">Click on any landmark pin across the map below to view project details.</p>
+
+       <!-- 地图容器与 4 个项目标注 -->
+       <div class="map-wrapper">
+           <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" alt="World Map" class="world-map-img">
+
+           <!-- 1. 杭州 (⛩️ 西湖) -->
+           <div class="map-marker" style="top: 44.5%; left: 81.5%;" onclick="showProject('hangzhou')">
+               <div class="marker-icon-wrapper">⛩️</div>
+               <div class="marker-label">
+                   <span class="en-name">Hangzhou</span>
+                   <span class="cn-name">杭州</span>
+               </div>
+           </div>
+
+           <!-- 2. 川西藏区 (🏔️ 雪山) -->
+           <div class="map-marker" style="top: 42%; left: 75.5%;" onclick="showProject('sichuan')">
+               <div class="marker-icon-wrapper">🏔️</div>
+               <div class="marker-label">
+                   <span class="en-name">W. Sichuan</span>
+                   <span class="cn-name">川西藏区</span>
+               </div>
+           </div>
+
+           <!-- 3. 广东 (🏙️ 都市) -->
+           <div class="map-marker" style="top: 48%; left: 79.5%;" onclick="showProject('guangdong')">
+               <div class="marker-icon-wrapper">🏙️</div>
+               <div class="marker-label">
+                   <span class="en-name">Guangdong</span>
+                   <span class="cn-name">广东</span>
+               </div>
+           </div>
+
+           <!-- 4. 阿拉斯加 (❄️ 极光) -->
+           <div class="map-marker" style="top: 18%; left: 14%;" onclick="showProject('alaska')">
+               <div class="marker-icon-wrapper">❄️</div>
+               <div class="marker-label">
+                   <span class="en-name">Alaska</span>
+                   <span class="cn-name">阿拉斯加</span>
+               </div>
+           </div>
+       </div>
+
+       <!-- 项目详情卡片 (已按要求移除 Source Code 按钮) -->
+       <div id="project-detail" class="info-card project-detail-modal">
+           <h3 id="project-title" style="color: var(--accent-color, #38bdf8); font-size: 1.5rem;">Select a marker on the map</h3>
+           <p id="project-desc" style="margin: 1rem 0;">Click any landmark pin above to load project information.</p>
+           <div class="project-links">
+               <a id="project-demo" href="#" target="_blank" class="btn">Live Demo / Overview</a>
+           </div>
+       </div>
+   </main>
+
+   <!-- 火箭光标 DOM -->
+   <div id="rocketCursor" class="custom-rocket-cursor">
+       <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+           <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+           <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+           <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+           <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+           <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+           <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+       </svg>
+   </div>
+
+   <script>
+       const projectData = {
+           hangzhou: {
+               title: "⛩️ 杭州项目 (Hangzhou Project)",
+               desc: "位于中国杭州的智慧城市/水乡文化前端互动平台，结合了西湖与江南风情要素。",
+               demo: "#"
+           },
+           sichuan: {
+               title: "🏔️ 川西藏区项目 (Western Sichuan Project)",
+               desc: "针对川西高原藏区地理/旅游/文化数字化的特化开发项目，注重离线体验与多语言适配。",
+               demo: "#"
+           },
+           guangdong: {
+               title: "🏙️ 广东项目 (Guangdong Project)",
+               desc: "面向大湾区的现代商业应用开发，包含高性能 API 数据对接与可视化交互大屏。",
+               demo: "#"
+           },
+           alaska: {
+               title: "❄️ 阿拉斯加项目 (Alaska Project)",
+               desc: "极地环境监测/极光数据可视化系统，处理高纬度遥感数据并支持 WebGL 绘制。",
+               demo: "#"
+           }
+       };
+
+       function showProject(regionKey) {
+           const data = projectData[regionKey];
+           if (!data) return;
+
+           const modal = document.getElementById('project-detail');
+           document.getElementById('project-title').innerText = data.title;
+           document.getElementById('project-desc').innerText = data.desc;
+           document.getElementById('project-demo').href = data.demo;
+
+           modal.style.display = 'block';
+           modal.scrollIntoView({ behavior: 'smooth' });
+       }
+
+       // 光标与控制面板通用脚本
+       document.addEventListener('DOMContentLoaded', () => {
+           const rocket = document.getElementById('rocketCursor');
+           if (rocket) {
+               window.addEventListener('mousemove', (e) => {
+                   rocket.style.left = `${e.clientX}px`;
+                   rocket.style.top = `${e.clientY}px`;
+               });
+
+               const interactiveSelector = 'a, button, .map-marker, input, .switch, [role="button"]';
+               document.addEventListener('mouseover', (e) => {
+                   if (e.target.closest(interactiveSelector)) rocket.classList.add('hovering');
+               });
+               document.addEventListener('mouseout', (e) => {
+                   if (e.target.closest(interactiveSelector)) rocket.classList.remove('hovering');
+               });
+           }
+
+           const logoBtn = document.getElementById('logoControlBtn');
+           const controlPanel = document.getElementById('controlPanel');
+           const darkModeToggle = document.getElementById('darkModeToggle');
+
+           if (logoBtn && controlPanel) {
+               logoBtn.addEventListener('click', (e) => {
+                   e.stopPropagation();
+                   const isVisible = controlPanel.style.display === 'block';
+                   controlPanel.style.display = isVisible ? 'none' : 'block';
+               });
+
+               document.addEventListener('click', (e) => {
+                   if (!controlPanel.contains(e.target) && e.target !== logoBtn) {
+                       controlPanel.style.display = 'none';
+                   }
+               });
+           }
+
+           const savedTheme = localStorage.getItem('theme');
+           if (savedTheme === 'light') {
+               document.body.classList.add('light-mode');
+               if (darkModeToggle) darkModeToggle.checked = false;
+           }
+
+           if (darkModeToggle) {
+               darkModeToggle.addEventListener('change', (e) => {
+                   if (e.target.checked) {
+                       document.body.classList.remove('light-mode');
+                       localStorage.setItem('theme', 'dark');
+                   } else {
+                       document.body.classList.add('light-mode');
+                       localStorage.setItem('theme', 'light');
+                   }
+               });
+           }
+       });
+   </script>
+</body>
+</html>
+
+________________
+
+
+User prompt: 有一个问题，是在about，project,project,project2还有contact界面都没有小火箭鼠标；此外，我希望在project界面还有contact界面背景加上一些流行划过的特效
+Response: 这两个需求安排得明明白白！
+针对所有页面小火箭光标丢失的问题，是因为原先的代码只写在了 index.html 和 projectp1.html 内。只要把火箭光标逻辑提取并写入全局的 javascript.js 中，并在所有 HTML 文件的 <body> 最下方放上光标 DOM，就能实现全站统一了。
+至于流行划过特效 (Shooting Stars)，我们可以直接用纯 CSS 在 style.css 里写一个高性能的流星划过动画，并在 projects.html 和 contact.html 中加入背景节点。
+一、 修改步骤 1：在 style.css 追加流星特效样式
+将以下 CSS 追加到你的 style.css 文件末尾：
+/* ==========================================================================
+  流星划过背景特效 (Shooting Stars)
+  ========================================================================== */
+.star-container {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100vw;
+   height: 100vh;
+   pointer-events: none;
+   z-index: 0;
+   overflow: hidden;
+}
+
+.shooting-star {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   width: 4px;
+   height: 4px;
+   background: #fff;
+   border-radius: 50%;
+   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1), 0 0 0 8px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 1);
+   animation: animateStar 3s linear infinite;
+   opacity: 0;
+}
+
+.shooting-star::before {
+   content: '';
+   position: absolute;
+   top: 50%;
+   transform: translateY(-50%);
+   width: 180px;
+   height: 1px;
+   background: linear-gradient(90deg, #fff, transparent);
+}
+
+@keyframes animateStar {
+   0% {
+       transform: rotate(315deg) translateX(0);
+       opacity: 1;
+   }
+   70% {
+       opacity: 1;
+   }
+   100% {
+       transform: rotate(315deg) translateX(-1000px);
+       opacity: 0;
+   }
+}
+
+/* 随机分布多条流星的速度与轨迹 */
+.shooting-star:nth-child(1) { top: 0px; right: 0px; animation-delay: 0s; animation-duration: 2.5s; }
+.shooting-star:nth-child(2) { top: 100px; right: 200px; animation-delay: 1.2s; animation-duration: 3s; }
+.shooting-star:nth-child(3) { top: 300px; right: 400px; animation-delay: 2.5s; animation-duration: 2s; }
+.shooting-star:nth-child(4) { top: 0px; right: 600px; animation-delay: 3.8s; animation-duration: 2.8s; }
+.shooting-star:nth-child(5) { top: 200px; right: 800px; animation-delay: 4.5s; animation-duration: 2.2s; }
+
+二、 修改步骤 2：更新全局 javascript.js
+请将全局小火箭光标和控制面板的代码放入 javascript.js 内部（这样所有引用了 javascript.js 的页面都能自动拥有小火箭和菜单功能）：
+在 javascript.js 中追加以下全局逻辑：
+// 全局火箭光标与 Control Panel 绑定
+document.addEventListener('DOMContentLoaded', () => {
+   // 1. 火箭光标
+   const rocket = document.getElementById('rocketCursor');
+   if (rocket) {
+       window.addEventListener('mousemove', (e) => {
+           rocket.style.left = `${e.clientX}px`;
+           rocket.style.top = `${e.clientY}px`;
+       });
+
+       const interactiveSelector = 'a, button, .map-marker, input, .switch, [role="button"]';
+       document.addEventListener('mouseover', (e) => {
+           if (e.target.closest(interactiveSelector)) rocket.classList.add('hovering');
+       });
+       document.addEventListener('mouseout', (e) => {
+           if (e.target.closest(interactiveSelector)) rocket.classList.remove('hovering');
+       });
+   }
+
+   // 2. 左上角 Command Center
+   const logoBtn = document.getElementById('logoControlBtn');
+   const controlPanel = document.getElementById('controlPanel');
+   const darkModeToggle = document.getElementById('darkModeToggle');
+
+   if (logoBtn && controlPanel) {
+       logoBtn.addEventListener('click', (e) => {
+           e.stopPropagation();
+           const isVisible = controlPanel.style.display === 'block';
+           controlPanel.style.display = isVisible ? 'none' : 'block';
+       });
+
+       document.addEventListener('click', (e) => {
+           if (!controlPanel.contains(e.target) && e.target !== logoBtn) {
+               controlPanel.style.display = 'none';
+           }
+       });
+   }
+
+   // 3. 深色/浅色主题初始化
+   const savedTheme = localStorage.getItem('theme');
+   if (savedTheme === 'light') {
+       document.body.classList.add('light-mode');
+       if (darkModeToggle) darkModeToggle.checked = false;
+   }
+
+   if (darkModeToggle) {
+       darkModeToggle.addEventListener('change', (e) => {
+           if (e.target.checked) {
+               document.body.classList.remove('light-mode');
+               localStorage.setItem('theme', 'dark');
+           } else {
+               document.body.classList.add('light-mode');
+               localStorage.setItem('theme', 'light');
+           }
+       });
+   }
+});
+
+三、 修改步骤 3：为各个页面加入通用 HTML 结构
+要在 about.html, projects.html, projectp2.html, contact.html 所有页面中都能显示小火箭，请确保：
+1. 引入了 javascript.js：
+<script src="javascript.js"></script>
+
+2. 并在每个 HTML 的 </body> 标签正上方，贴入火箭 DOM 节点：
+<!-- 全局火箭光标 -->
+<div id="rocketCursor" class="custom-rocket-cursor">
+   <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+       <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+       <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+       <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+       <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+       <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+       <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+       <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+   </svg>
+</div>
+
+3. 对于 projects.html 和 contact.html，只需在 <body> 内部开头加入以下流星节点，背景就会自动出现极具逼格的划过流星：
+<!-- 流星划过背景特效 -->
+<div class="star-container">
+   <div class="shooting-star"></div>
+   <div class="shooting-star"></div>
+   <div class="shooting-star"></div>
+   <div class="shooting-star"></div>
+   <div class="shooting-star"></div>
+</div>
+
+你可以先测试一下 projects.html 或 contact.html，不仅小火箭会重新出现，流星划过的深空氛围感也会直接拉满！
+________________
+
+
+User prompt: 正上方是在body之外吗？我不太理解
+Response: 不在 <body> 之外！正上方 指的是 </body> 结束标签的内部、紧挨着它的上面。
+在 HTML 结构中，所有网页上能让人看到、用到的元素（包括这里的火箭光标和流星），都必须写在 <body> 和 </body> 之间。
+正确的位置示例：
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <title>My Page</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+   <!-- 这里是你的网页正常内容，比如 header、main、footer 等 -->
+   <header>...</header>
+   <main>...</main>
+
+   <!-- 👇【放在这里！】这就是所谓的 "</body> 标签的正上方" -->
+   <!-- 流星背景（针对 projects.html 和 contact.html） -->
+   <div class="star-container">
+       <div class="shooting-star"></div>
+       <div class="shooting-star"></div>
+       <div class="shooting-star"></div>
+       <div class="shooting-star"></div>
+       <div class="shooting-star"></div>
+   </div>
+
+   <!-- 火箭光标（所有页面都需要） -->
+   <div id="rocketCursor" class="custom-rocket-cursor">
+       <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+           <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+           <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+           <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+           <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+           <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+           <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+       </svg>
+   </div>
+
+   <!-- 引入全局 JS 脚本 -->
+   <script src="javascript.js"></script>
+
+</body> <!-- 👈 这里的 </body> 是网页身体的结束标签 -->
+</html>
+
+为什么建议放在这里？
+把火箭光标这种遮罩层或全局挂件放在 </body> 之前（也就是 body 的最底部），可以确保网页原本的主要内容先加载出来，同时不会影响其他元素的排版布局。
+________________
+
+
+User prompt: <!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Jack's Solar Portfolio</title> <link rel="stylesheet" href="style.css"> <style> body { margin: 0; overflow: hidden; background-color: #030712; color: #ffffff; font-family: 'Inter', system-ui, -apple-system, sans-serif; } #solarCanvas { display: block; width: 100vw; height: 100vh; } .back-btn { position: fixed; bottom: 2rem; left: 2rem; z-index: 100; padding: 10px 20px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--accent-color, #38bdf8); color: #fff; border-radius: 8px; cursor: pointer; backdrop-filter: blur(8px); transition: all 0.3s ease; } .back-btn.hidden { display: none; } .back-btn:hover { background: var(--accent-color, #38bdf8); color: #000; } </style> </head> <body> <header style="position: fixed; top: 0; left: 0; width: 100%; z-index: 100;"> <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;"> <!-- 左上角可点击 Logo --> <div class="logo"> <button id="logoControlBtn" class="logo-btn"> 🚀 Jack's Portfolio </button> </div> <ul class="nav-links" style="display: flex; gap: 1.5rem; list-style: none; margin: 0;"> <li><a href="index.html" class="active">Home</a></li> <li><a href="about.html" id="nav-about">About</a></li> <li><a href="projects.html" id="nav-projects">Projects</a></li> <li><a href="contact.html" id="nav-contact">Contact</a></li> </ul> </nav> </header> <!-- 左上角控制面板 --> <div id="controlPanel" class="control-panel-modal"> <div class="panel-header"> <h4>⚙️ Command Center</h4> </div> <div class="panel-item"> <span>Dark Mode (深色模式)</span> <label class="switch"> <input type="checkbox" id="darkModeToggle" checked> <span class="slider"></span> </label> </div> </div> <!-- 太阳系主 Canvas --> <canvas id="solarCanvas"></canvas> <!-- 返回太阳系视图按钮 --> <button id="backToSolarBtn" class="back-btn hidden">← Back to Solar System</button> <!-- 自定义火箭光标 --> <div id="rocketCursor" class="custom-rocket-cursor"> <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"> <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/> <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/> <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/> <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/> <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/> <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/> <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/> </svg> </div> <script src="javascript.js"></script> <script> // 火箭光标与控制面板全局逻辑 document.addEventListener('DOMContentLoaded', () => { const rocket = document.getElementById('rocketCursor'); if (rocket) { window.addEventListener('mousemove', (e) => { rocket.style.left = `${e.clientX}px`; rocket.style.top = `${e.clientY}px`; }); const interactiveSelector = 'a, button, .map-marker, input, .switch, [role="button"]'; document.addEventListener('mouseover', (e) => { if (e.target.closest(interactiveSelector)) rocket.classList.add('hovering'); }); document.addEventListener('mouseout', (e) => { if (e.target.closest(interactiveSelector)) rocket.classList.remove('hovering'); }); } const logoBtn = document.getElementById('logoControlBtn'); const controlPanel = document.getElementById('controlPanel'); const darkModeToggle = document.getElementById('darkModeToggle'); if (logoBtn && controlPanel) { logoBtn.addEventListener('click', (e) => { e.stopPropagation(); const isVisible = controlPanel.style.display === 'block'; controlPanel.style.display = isVisible ? 'none' : 'block'; }); document.addEventListener('click', (e) => { if (!controlPanel.contains(e.target) && e.target !== logoBtn) { controlPanel.style.display = 'none'; } }); } const savedTheme = localStorage.getItem('theme'); if (savedTheme === 'light') { document.body.classList.add('light-mode'); if (darkModeToggle) darkModeToggle.checked = false; } if (darkModeToggle) { darkModeToggle.addEventListener('change', (e) => { if (e.target.checked) { document.body.classList.remove('light-mode'); localStorage.setItem('theme', 'dark'); } else { document.body.classList.add('light-mode'); localStorage.setItem('theme', 'light'); } }); } }); </script> </body> </html>这是我现在的index,html，是不是过于冗余了一点；此外，那句hi i'm jack也不见了
+Response: 你的观察非常敏锐！代码确实存在两处明显的冗余，同时原本的主页欢迎语（Hi, I'm Jack）在重构 Canvas 结构时被遗漏掉了。
+一、 为什么冗余？
+   1. 重复的 JS 逻辑：<script> 标签里的火箭光标、控制面板和主题切换代码，已经在全局 javascript.js 里实现过了，在 HTML 里重写一遍属于无用重复。
+   2. 内联样式过多：<header> 和 <nav> 上的内联样式完全可以抽取到 style.css 中，保持 HTML 的干净整洁。
+二、 优化后的精简版 index.html
+这份代码补回了 Hi, I'm Jack 欢迎标语，并且极大地简化了页面结构：
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Jack's Solar Portfolio</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+   <!-- 顶栏导航 -->
+   <header class="site-header">
+       <nav class="navbar">
+           <div class="logo">
+               <button id="logoControlBtn" class="logo-btn">
+                   🚀 Jack's Portfolio
+               </button>
+           </div>
+           <ul class="nav-links">
+               <li><a href="index.html" class="active">Home</a></li>
+               <li><a href="about.html" id="nav-about">About</a></li>
+               <li><a href="projects.html" id="nav-projects">Projects</a></li>
+               <li><a href="contact.html" id="nav-contact">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <!-- 左上角 Command Center 控制面板 -->
+   <div id="controlPanel" class="control-panel-modal">
+       <div class="panel-header">
+           <h4>⚙️ Command Center</h4>
+       </div>
+       <div class="panel-item">
+           <span>Dark Mode (深色模式)</span>
+           <label class="switch">
+               <input type="checkbox" id="darkModeToggle" checked>
+               <span class="slider"></span>
+           </label>
+       </div>
+   </div>
+
+   <!-- 主页欢迎标语 Overlay (补回 Hi, I'm Jack) -->
+   <div class="hero-overlay">
+       <h1 class="hero-title">Hi, I'm Jack</h1>
+       <p class="hero-subtitle">Explore the solar system to discover my work & journey</p>
+   </div>
+
+   <!-- 太阳系 2D Canvas -->
+   <canvas id="solarCanvas"></canvas>
+
+   <!-- 返回太阳系主视图按钮 (地月系下显示) -->
+   <button id="backToSolarBtn" class="back-btn hidden">← Back to Solar System</button>
+
+   <!-- 自定义火箭光标 -->
+   <div id="rocketCursor" class="custom-rocket-cursor">
+       <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+           <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+           <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+           <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+           <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+           <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+           <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+       </svg>
+   </div>
+
+   <!-- 全局 JS 逻辑 (光标、控制面板、Canvas 绘制全在此文件中) -->
+   <script src="javascript.js"></script>
+</body>
+</html>
+
+三、 对应的 CSS 优化 (补充到 style.css)
+请确保你的 style.css 包含以下样式，用以控制 Header 布局 和 Hi, I'm Jack 标语 的悬浮位置：
+/* 顶部固定导航栏 */
+.site-header {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   z-index: 100;
+}
+
+.navbar {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 1rem 2rem;
+}
+
+/* 主页欢迎标语居中悬浮样式 */
+.hero-overlay {
+   position: fixed;
+   top: 15%;
+   left: 50%;
+   transform: translateX(-50%);
+   text-align: center;
+   pointer-events: none; /* 让鼠标事件穿透到下方的 Canvas */
+   z-index: 10;
+}
+
+.hero-title {
+   font-size: 3rem;
+   font-weight: 800;
+   margin: 0;
+   background: linear-gradient(135deg, #ffffff 0%, var(--accent-color, #38bdf8) 100%);
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+   filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.4));
+}
+
+.hero-subtitle {
+   margin-top: 0.5rem;
+   color: var(--text-secondary, #94a3b8);
+   font-size: 1.1rem;
+   letter-spacing: 0.5px;
+}
+
+________________
+
+
+User prompt: 好了，接下来我要在about界面放我的照片和resume，使用到我的占位符，先告诉我我需要在我的文件夹里做什么(比如说建立字文件夹和放入照片，cv等文件)，之后我们再讨论代码方面的；此外，project1内容的overview我不打算单独做网站了，而是点击overview之后会放一个项目介绍和几张照片，要和about的照片放在一起吗
+Response: 第一步：准备本地文件夹结构
+为了让网站文件条理清晰，建议在你的项目根目录下新建 2 个子文件夹：
+   * assets/（资源根目录）：
+   * 在里面新建 images/ 子文件夹：专门存放你的个人照、CV 里涉及的照片、以及 Project 1 的项目展示图。
+   * 在里面新建 docs/ 子文件夹：专门存放你的 PDF 版简历（方便用户下载）。
+最终推荐的目录结构如下：
+your-portfolio/
+│
+├── assets/
+│   ├── images/
+│   │   ├── profile.jpg             # 你的 About 页面个人照
+│   │   ├── project1-cover.jpg      # Project 1 的主图/封面
+│   │   ├── project1-detail-1.jpg   # Project 1 的展示图 1
+│   │   └── project1-detail-2.jpg   # Project 1 的展示图 2
+│   └── docs/
+│       └── Jack_Resume.pdf         # 你的 PDF 简历
+│
+├── index.html
+├── about.html
+├── projects.html
+├── projectp1.html
+├── style.css
+└── javascript.js
+
+第二步：关于 Project 1 图片与 About 图片是否要放在一起
+建议：放在同一个 assets/images/ 文件夹内，但通过“文件名命名规范”做区分。
+   * 原因：如果为 Project 1 单独建一个 images/project1/ 子文件夹，后续项目多了之后层级会变深，代码里写图片路径容易出错。
+   * 命名规范建议：
+   * About 页面：以 profile 或 about 开头（例如：profile.jpg、about-hero.jpg）。
+   * Project 1：以 project1 开头（例如：project1-img1.jpg、project1-img2.jpg）。
+第三步：关于 Project 1 的 Overview 改为弹窗/图文展示
+这个思路非常合理！点击 Overview 不跳出新网址，而是直接在当前页面弹出（或者展开）一个项目图文介绍卡片 + 图片轮播/网格。
+   * 图片要求：准备 2~4 张 Project 1 的项目截图或展示图（建议宽度在 800px - 1200px 之间，JPG/PNG 格式均可，单张大小控制在 1MB 以内以提升加载速度）。
+当你完成文件夹建立并放入对应的测试照片与 PDF 简历后，告诉我，我们就可以开始编写 about.html 和 projectp1.html 的最新代码！你目前打算在 Resume 部分展示在线文字版，还是只提供一个 PDF 下载按钮？
+________________
+
+
+User prompt: 我打算把我的pdf放在文件夹里面，然后点击那个按钮就会跳到我的pdf；我现在在asset里面放好了我的about-resume.pdf和about-myphoto.jpeg，但是project的效果我想做成点开overview会出现一个弹窗，标题是overview，然后有我放的照片和文字介绍
+Response: 文件夹结构和图片文件准备得非常标准！
+针对你的需求：
+   1. About 页面：直接将 PDF 链接设为预览/打开模式，用户点击按钮即可在新标签页直接查看或下载 assets/docs/about-resume.pdf。
+   2. Project 1 Overview 弹窗：点击 Overview 后触发一个模态弹窗（Modal），展示标题、文字介绍以及带图文展示区。
+以下是具体的代码实现方案：
+一、 修改 about.html
+在 about.html 中引入你的照片 about-myphoto.jpeg 以及简历按钮链接：
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>About | Jack's Portfolio</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+       .about-container {
+           max-width: 1000px;
+           margin: 100px auto 4rem;
+           padding: 0 2rem;
+           display: grid;
+           grid-template-columns: 1fr 2fr;
+           gap: 3rem;
+           align-items: center;
+       }
+
+       .profile-img-wrapper {
+           position: relative;
+           border-radius: 20px;
+           overflow: hidden;
+           border: 2px solid rgba(56, 189, 248, 0.3);
+           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+       }
+
+       .profile-img {
+           width: 100%;
+           height: auto;
+           display: block;
+           object-fit: cover;
+       }
+
+       .about-content h1 {
+           font-size: 2.5rem;
+           margin-bottom: 1rem;
+           color: #fff;
+       }
+
+       .about-content p {
+           color: #94a3b8;
+           line-height: 1.7;
+           margin-bottom: 1.5rem;
+       }
+
+       .resume-btn-group {
+           display: flex;
+           gap: 1rem;
+       }
+
+       .btn {
+           display: inline-block;
+           padding: 10px 24px;
+           border-radius: 8px;
+           background: #38bdf8;
+           color: #0f172a;
+           font-weight: 600;
+           text-decoration: none;
+           transition: all 0.3s ease;
+       }
+
+       .btn:hover {
+           background: #0284c7;
+           color: #fff;
+           transform: translateY(-2px);
+       }
+
+       @media (max-width: 768px) {
+           .about-container {
+               grid-template-columns: 1fr;
+               text-align: center;
+           }
+       }
+   </style>
+</head>
+<body>
+
+   <header class="site-header">
+       <nav class="navbar">
+           <div class="logo">
+               <button id="logoControlBtn" class="logo-btn">🚀 Jack's Portfolio</button>
+           </div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html" class="active">About</a></li>
+               <li><a href="projects.html">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <div id="controlPanel" class="control-panel-modal">
+       <div class="panel-header"><h4>⚙️ Command Center</h4></div>
+       <div class="panel-item">
+           <span>Dark Mode (深色模式)</span>
+           <label class="switch">
+               <input type="checkbox" id="darkModeToggle" checked>
+               <span class="slider"></span>
+           </label>
+       </div>
+   </div>
+
+   <main class="about-container">
+       <!-- 个人照片 -->
+       <div class="profile-img-wrapper">
+           <img src="assets/images/about-myphoto.jpeg" alt="Jack's Photo" class="profile-img">
+       </div>
+
+       <!-- 个人介绍与简历按钮 -->
+       <div class="about-content">
+           <h1>About Me</h1>
+           <p>
+               Hi! I'm Jack, a passionate developer and interactive experience builder. 
+               I focus on creating immersive web environments, combining spatial design with modern technologies.
+           </p>
+           <div class="resume-btn-group">
+               <!-- 点击直接在新标签页中预览/打开 PDF -->
+               <a href="assets/docs/about-resume.pdf" target="_blank" class="btn">
+                   📄 View Full Resume (PDF)
+               </a>
+           </div>
+       </div>
+   </main>
+
+   <!-- 火箭光标 -->
+   <div id="rocketCursor" class="custom-rocket-cursor">
+       <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+           <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+           <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+           <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+           <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+           <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+           <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+       </svg>
+   </div>
+
+   <script src="javascript.js"></script>
+</body>
+</html>
+
+二、 修改 projectp1.html（带有 Overview 模态弹窗）
+此版本加入了可弹出的 Overview 弹窗，包含：标题、项目介绍文字以及展示图片网络。
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Part 1: Regional Projects | Jack</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+       .map-wrapper {
+           position: relative;
+           width: 100%;
+           max-width: 1000px;
+           margin: 2rem auto;
+           border-radius: 20px;
+           overflow: hidden;
+           border: 2px solid rgba(255, 255, 255, 0.15);
+           background-color: #0284c7;
+           box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+       }
+
+       .world-map-img {
+           width: 100%;
+           height: auto;
+           display: block;
+           filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.3)) hue-rotate(60deg) saturate(1.8) brightness(1.1);
+       }
+
+       .map-marker {
+           position: absolute;
+           transform: translate(-50%, -50%);
+           cursor: pointer;
+           z-index: 10;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+       }
+
+       .marker-icon-wrapper {
+           width: 44px;
+           height: 44px;
+           background: rgba(15, 23, 42, 0.88);
+           border: 2px solid #fde047;
+           border-radius: 50%;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           font-size: 1.3rem;
+           box-shadow: 0 0 15px rgba(253, 224, 71, 0.6);
+       }
+
+       .marker-label {
+           margin-top: 6px;
+           background: rgba(15, 23, 42, 0.92);
+           border: 1px solid rgba(255, 255, 255, 0.2);
+           padding: 4px 10px;
+           border-radius: 12px;
+           text-align: center;
+       }
+
+       .marker-label .en-name { font-size: 0.85rem; font-weight: 700; color: #fff; display: block; }
+       .marker-label .cn-name { font-size: 0.75rem; font-weight: 600; color: #fde047; display: block; }
+
+       .project-detail-modal {
+           display: none;
+           margin-top: 2rem;
+           animation: fadeIn 0.4s ease-out;
+       }
+
+       /* Overview 遮罩弹窗样式 */
+       .overview-modal-backdrop {
+           display: none;
+           position: fixed;
+           top: 0; left: 0; width: 100vw; height: 100vh;
+           background: rgba(0, 0, 0, 0.75);
+           backdrop-filter: blur(8px);
+           z-index: 200;
+           justify-content: center;
+           align-items: center;
+       }
+
+       .overview-modal-content {
+           background: #0f172a;
+           border: 1px solid rgba(56, 189, 248, 0.4);
+           border-radius: 16px;
+           width: 90%;
+           max-width: 700px;
+           max-height: 85vh;
+           overflow-y: auto;
+           padding: 2rem;
+           position: relative;
+           box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+       }
+
+       .modal-close-btn {
+           position: absolute;
+           top: 1rem;
+           right: 1.5rem;
+           background: transparent;
+           border: none;
+           color: #94a3b8;
+           font-size: 1.8rem;
+           cursor: pointer;
+       }
+
+       .modal-close-btn:hover { color: #fff; }
+
+       .overview-gallery {
+           display: grid;
+           grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+           gap: 1rem;
+           margin-top: 1.5rem;
+       }
+
+       .overview-gallery img {
+           width: 100%;
+           border-radius: 8px;
+           border: 1px solid rgba(255, 255, 255, 0.1);
+       }
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(12px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+   </style>
+</head>
+<body>
+   <header class="site-header">
+       <nav class="navbar">
+           <div class="logo">
+               <button id="logoControlBtn" class="logo-btn">🚀 Jack's Portfolio</button>
+           </div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html">About</a></li>
+               <li><a href="projects.html" class="active">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <div id="controlPanel" class="control-panel-modal">
+       <div class="panel-header"><h4>⚙️ Command Center</h4></div>
+       <div class="panel-item">
+           <span>Dark Mode (深色模式)</span>
+           <label class="switch">
+               <input type="checkbox" id="darkModeToggle" checked>
+               <span class="slider"></span>
+           </label>
+       </div>
+   </div>
+
+   <main class="page-container" style="max-width: 1100px; margin: 80px auto 2rem;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+           <h1>Part 1: Regional Projects</h1>
+           <a href="projects.html" class="btn btn-outline">← Back to Projects</a>
+       </div>
+       <p class="contact-subtitle">Click on any landmark pin across the map below to view project details.</p>
+
+       <!-- 地图容器 -->
+       <div class="map-wrapper">
+           <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" alt="World Map" class="world-map-img">
+
+           <div class="map-marker" style="top: 44.5%; left: 81.5%;" onclick="showProject('hangzhou')">
+               <div class="marker-icon-wrapper">⛩️</div>
+               <div class="marker-label"><span class="en-name">Hangzhou</span><span class="cn-name">杭州</span></div>
+           </div>
+
+           <div class="map-marker" style="top: 42%; left: 75.5%;" onclick="showProject('sichuan')">
+               <div class="marker-icon-wrapper">🏔️</div>
+               <div class="marker-label"><span class="en-name">W. Sichuan</span><span class="cn-name">川西藏区</span></div>
+           </div>
+
+           <div class="map-marker" style="top: 48%; left: 79.5%;" onclick="showProject('guangdong')">
+               <div class="marker-icon-wrapper">🏙️</div>
+               <div class="marker-label"><span class="en-name">Guangdong</span><span class="cn-name">广东</span></div>
+           </div>
+
+           <div class="map-marker" style="top: 18%; left: 14%;" onclick="showProject('alaska')">
+               <div class="marker-icon-wrapper">❄️</div>
+               <div class="marker-label"><span class="en-name">Alaska</span><span class="cn-name">阿拉斯加</span></div>
+           </div>
+       </div>
+
+       <!-- 项目详情展现区 -->
+       <div id="project-detail" class="info-card project-detail-modal">
+           <h3 id="project-title" style="color: var(--accent-color, #38bdf8); font-size: 1.5rem;">Select a marker on the map</h3>
+           <p id="project-desc" style="margin: 1rem 0;">Click any landmark pin above to load project information.</p>
+           <div class="project-links">
+               <!-- 点击调用 JavaScript 触发 Modal 弹窗 -->
+               <button id="overviewBtn" onclick="openOverviewModal()" class="btn">Overview</button>
+           </div>
+       </div>
+   </main>
+
+   <!-- Overview 模态弹窗 -->
+   <div id="overviewModal" class="overview-modal-backdrop" onclick="closeOverviewModal(event)">
+       <div class="overview-modal-content" onclick="event.stopPropagation()">
+           <button class="modal-close-btn" onclick="closeOverviewModal()">×</button>
+           <h2 id="modalTitle" style="color: #38bdf8; margin-top: 0;">Overview</h2>
+           <div id="modalBody">
+               <p id="modalDescription">项目详细介绍内容将会在这里展示。</p>
+               <div class="overview-gallery" id="modalGallery">
+                   <!-- 可以在此处动态放入图片 -->
+                   <img src="assets/images/about-myphoto.jpeg" alt="Project Photo 1">
+               </div>
+           </div>
+       </div>
+   </div>
+
+   <!-- 火箭光标 -->
+   <div id="rocketCursor" class="custom-rocket-cursor">
+       <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+           <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+           <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+           <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+           <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+           <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+           <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+       </svg>
+   </div>
+
+   <script src="javascript.js"></script>
+   <script>
+       let currentRegion = null;
+
+       const projectData = {
+           hangzhou: {
+               title: "⛩️ 杭州项目 (Hangzhou Project)",
+               desc: "位于中国杭州的智慧城市/水乡文化前端互动平台，结合了西湖与江南风情要素。",
+               images: ["assets/images/about-myphoto.jpeg"] // 可以在这里放置项目配套照片
+           },
+           sichuan: {
+               title: "🏔️ 川西藏区项目 (Western Sichuan Project)",
+               desc: "针对川西高原藏区地理/旅游/文化数字化的特化开发项目，注重离线体验与多语言适配。",
+               images: ["assets/images/about-myphoto.jpeg"]
+           },
+           guangdong: {
+               title: "🏙️ 广东项目 (Guangdong Project)",
+               desc: "面向大湾区的现代商业应用开发，包含高性能 API 数据对接与可视化交互大屏。",
+               images: ["assets/images/about-myphoto.jpeg"]
+           },
+           alaska: {
+               title: "❄️ 阿拉斯加项目 (Alaska Project)",
+               desc: "极地环境监测/极光数据可视化系统，处理高纬度遥感数据并支持 WebGL 绘制。",
+               images: ["assets/images/about-myphoto.jpeg"]
+           }
+       };
+
+       function showProject(regionKey) {
+           currentRegion = regionKey;
+           const data = projectData[regionKey];
+           if (!data) return;
+
+           const card = document.getElementById('project-detail');
+           document.getElementById('project-title').innerText = data.title;
+           document.getElementById('project-desc').innerText = data.desc;
+
+           card.style.display = 'block';
+           card.scrollIntoView({ behavior: 'smooth' });
+       }
+
+       function openOverviewModal() {
+           if (!currentRegion) return;
+           const data = projectData[currentRegion];
+           
+           document.getElementById('modalTitle').innerText = data.title + " - Overview";
+           document.getElementById('modalDescription').innerText = data.desc;
+
+           // 渲染图片
+           const gallery = document.getElementById('modalGallery');
+           gallery.innerHTML = data.images.map(img => `<img src="${img}" alt="Overview Photo">`).join('');
+
+           document.getElementById('overviewModal').style.display = 'flex';
+       }
+
+       function closeOverviewModal(e) {
+           document.getElementById('overviewModal').style.display = 'none';
+       }
+   </script>
+</body>
+</html>
+
+接下来你可以直接将项目专属照片（例如：project1-photo1.jpg）追加放进 assets/images/ 文件夹中，并在 JS 里的 projectData 进行相应的配置！
+________________
+
+
+User prompt: 给我完整版的这两个
+Response: 这里是整理好的完整版 about.html 与 projectp1.html，代码已包含全局组件（火箭光标、Command Center、流星背景特效）、你的本地资源路径（assets/images/ 与 assets/docs/），以及完美集成的 Overview 模态弹窗系统。
+一、 完整版 about.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>About | Jack's Portfolio</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+       .about-container {
+           max-width: 1000px;
+           margin: 100px auto 4rem;
+           padding: 0 2rem;
+           display: grid;
+           grid-template-columns: 1fr 2fr;
+           gap: 3rem;
+           align-items: center;
+           position: relative;
+           z-index: 10;
+       }
+
+       .profile-img-wrapper {
+           position: relative;
+           border-radius: 20px;
+           overflow: hidden;
+           border: 2px solid rgba(56, 189, 248, 0.3);
+           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+           background: rgba(15, 23, 42, 0.6);
+       }
+
+       .profile-img {
+           width: 100%;
+           height: auto;
+           display: block;
+           object-fit: cover;
+       }
+
+       .about-content h1 {
+           font-size: 2.5rem;
+           margin-bottom: 1rem;
+           color: #ffffff;
+       }
+
+       .about-content p {
+           color: #94a3b8;
+           line-height: 1.7;
+           margin-bottom: 1.5rem;
+           font-size: 1.05rem;
+       }
+
+       .resume-btn-group {
+           display: flex;
+           gap: 1rem;
+       }
+
+       .btn-resume {
+           display: inline-flex;
+           align-items: center;
+           gap: 0.5rem;
+           padding: 12px 24px;
+           border-radius: 8px;
+           background: var(--accent-color, #38bdf8);
+           color: #0f172a;
+           font-weight: 700;
+           text-decoration: none;
+           transition: all 0.3s ease;
+           box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+       }
+
+       .btn-resume:hover {
+           background: #0284c7;
+           color: #ffffff;
+           transform: translateY(-2px);
+           box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+       }
+
+       @media (max-width: 768px) {
+           .about-container {
+               grid-template-columns: 1fr;
+               text-align: center;
+           }
+           .resume-btn-group {
+               justify-content: center;
+           }
+       }
+   </style>
+</head>
+<body>
+
+   <!-- 顶部固定导航栏 -->
+   <header class="site-header">
+       <nav class="navbar">
+           <div class="logo">
+               <button id="logoControlBtn" class="logo-btn">
+                   🚀 Jack's Portfolio
+               </button>
+           </div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html" class="active">About</a></li>
+               <li><a href="projects.html">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <!-- 左上角 Command Center 控制面板 -->
+   <div id="controlPanel" class="control-panel-modal">
+       <div class="panel-header">
+           <h4>⚙️ Command Center</h4>
+       </div>
+       <div class="panel-item">
+           <span>Dark Mode (深色模式)</span>
+           <label class="switch">
+               <input type="checkbox" id="darkModeToggle" checked>
+               <span class="slider"></span>
+           </label>
+       </div>
+   </div>
+
+   <!-- 主主体内容 -->
+   <main class="about-container">
+       <div class="profile-img-wrapper">
+           <img src="assets/images/about-myphoto.jpeg" alt="Jack's Profile Photo" class="profile-img">
+       </div>
+
+       <div class="about-content">
+           <h1>About Me</h1>
+           <p>
+               Hi! I'm Jack, a developer and creative web builder passionate about crafting interactive digital experiences and spatial user interfaces. 
+               I enjoy bringing together clean design, modern web technologies, and intuitive user workflows.
+           </p>
+           <div class="resume-btn-group">
+               <!-- 点击直接在浏览器新标签页打开 PDF -->
+               <a href="assets/docs/about-resume.pdf" target="_blank" class="btn-resume">
+                   📄 View Full Resume (PDF)
+               </a>
+           </div>
+       </div>
+   </main>
+
+   <!-- 全局自定义火箭光标 -->
+   <div id="rocketCursor" class="custom-rocket-cursor">
+       <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+           <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+           <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+           <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+           <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+           <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+           <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+       </svg>
+   </div>
+
+   <!-- 引入全局逻辑 -->
+   <script src="javascript.js"></script>
+</body>
+</html>
+
+二、 完整版 projectp1.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Part 1: Regional Projects | Jack</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+       .map-wrapper {
+           position: relative;
+           width: 100%;
+           max-width: 1000px;
+           margin: 2rem auto;
+           border-radius: 20px;
+           overflow: hidden;
+           border: 2px solid rgba(255, 255, 255, 0.15);
+           background-color: #0284c7;
+           box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+       }
+
+       .world-map-img {
+           width: 100%;
+           height: auto;
+           display: block;
+           filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.3)) hue-rotate(60deg) saturate(1.8) brightness(1.1);
+       }
+
+       .map-marker {
+           position: absolute;
+           transform: translate(-50%, -50%);
+           cursor: pointer;
+           z-index: 10;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+       }
+
+       .map-marker:hover {
+           transform: translate(-50%, -50%) scale(1.2);
+           z-index: 30;
+       }
+
+       .marker-icon-wrapper {
+           width: 44px;
+           height: 44px;
+           background: rgba(15, 23, 42, 0.88);
+           border: 2px solid #fde047;
+           border-radius: 50%;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           font-size: 1.3rem;
+           box-shadow: 0 0 15px rgba(253, 224, 71, 0.6);
+       }
+
+       .marker-label {
+           margin-top: 6px;
+           background: rgba(15, 23, 42, 0.92);
+           border: 1px solid rgba(255, 255, 255, 0.2);
+           padding: 4px 10px;
+           border-radius: 12px;
+           text-align: center;
+           backdrop-filter: blur(6px);
+       }
+
+       .marker-label .en-name { font-size: 0.85rem; font-weight: 700; color: #ffffff; display: block; }
+       .marker-label .cn-name { font-size: 0.75rem; font-weight: 600; color: #fde047; display: block; }
+
+       .project-detail-modal {
+           display: none;
+           margin-top: 2rem;
+           animation: fadeIn 0.4s ease-out;
+       }
+
+       /* Overview 模态弹窗样式 */
+       .overview-modal-backdrop {
+           display: none;
+           position: fixed;
+           top: 0; left: 0; 
+           width: 100vw; height: 100vh;
+           background: rgba(2, 6, 23, 0.82);
+           backdrop-filter: blur(8px);
+           z-index: 200;
+           justify-content: center;
+           align-items: center;
+       }
+
+       .overview-modal-content {
+           background: #0f172a;
+           border: 1px solid rgba(56, 189, 248, 0.4);
+           border-radius: 20px;
+           width: 90%;
+           max-width: 720px;
+           max-height: 85vh;
+           overflow-y: auto;
+           padding: 2.5rem;
+           position: relative;
+           box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+           color: #f8fafc;
+       }
+
+       .modal-close-btn {
+           position: absolute;
+           top: 1.2rem;
+           right: 1.5rem;
+           background: transparent;
+           border: none;
+           color: #94a3b8;
+           font-size: 2rem;
+           cursor: pointer;
+           line-height: 1;
+           transition: color 0.2s ease;
+       }
+
+       .modal-close-btn:hover { color: #ffffff; }
+
+       .overview-gallery {
+           display: grid;
+           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+           gap: 1.2rem;
+           margin-top: 1.8rem;
+       }
+
+       .overview-gallery img {
+           width: 100%;
+           height: 180px;
+           object-fit: cover;
+           border-radius: 12px;
+           border: 1px solid rgba(255, 255, 255, 0.15);
+           transition: transform 0.3s ease;
+       }
+
+       .overview-gallery img:hover {
+           transform: scale(1.03);
+       }
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(12px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+   </style>
+</head>
+<body>
+
+   <!-- 顶部固定导航栏 -->
+   <header class="site-header">
+       <nav class="navbar">
+           <div class="logo">
+               <button id="logoControlBtn" class="logo-btn">
+                   🚀 Jack's Portfolio
+               </button>
+           </div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html">About</a></li>
+               <li><a href="projects.html" class="active">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <!-- Command Center 控制面板 -->
+   <div id="controlPanel" class="control-panel-modal">
+       <div class="panel-header">
+           <h4>⚙️ Command Center</h4>
+       </div>
+       <div class="panel-item">
+           <span>Dark Mode (深色模式)</span>
+           <label class="switch">
+               <input type="checkbox" id="darkModeToggle" checked>
+               <span class="slider"></span>
+           </label>
+       </div>
+   </div>
+
+   <!-- 主主体内容 -->
+   <main class="page-container" style="max-width: 1100px; margin: 90px auto 2rem; padding: 0 1.5rem; position: relative; z-index: 10;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+           <h1>Part 1: Regional Projects</h1>
+           <a href="projects.html" class="btn btn-outline">← Back to Projects</a>
+       </div>
+       <p class="contact-subtitle">Click on any landmark pin across the map below to view project details.</p>
+
+       <!-- 地图容器 -->
+       <div class="map-wrapper">
+           <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" alt="World Map" class="world-map-img">
+
+           <div class="map-marker" style="top: 44.5%; left: 81.5%;" onclick="showProject('hangzhou')">
+               <div class="marker-icon-wrapper">⛩️</div>
+               <div class="marker-label"><span class="en-name">Hangzhou</span><span class="cn-name">杭州</span></div>
+           </div>
+
+           <div class="map-marker" style="top: 42%; left: 75.5%;" onclick="showProject('sichuan')">
+               <div class="marker-icon-wrapper">🏔️</div>
+               <div class="marker-label"><span class="en-name">W. Sichuan</span><span class="cn-name">川西藏区</span></div>
+           </div>
+
+           <div class="map-marker" style="top: 48%; left: 79.5%;" onclick="showProject('guangdong')">
+               <div class="marker-icon-wrapper">🏙️</div>
+               <div class="marker-label"><span class="en-name">Guangdong</span><span class="cn-name">广东</span></div>
+           </div>
+
+           <div class="map-marker" style="top: 18%; left: 14%;" onclick="showProject('alaska')">
+               <div class="marker-icon-wrapper">❄️</div>
+               <div class="marker-label"><span class="en-name">Alaska</span><span class="cn-name">阿拉斯加</span></div>
+           </div>
+       </div>
+
+       <!-- 底部选中项目简报卡片 -->
+       <div id="project-detail" class="info-card project-detail-modal">
+           <h3 id="project-title" style="color: var(--accent-color, #38bdf8); font-size: 1.5rem; margin-top: 0;">Select a marker on the map</h3>
+           <p id="project-desc" style="margin: 1rem 0; color: #94a3b8;">Click any landmark pin above to load project information.</p>
+           <div class="project-links">
+               <button id="overviewBtn" onclick="openOverviewModal()" class="btn">Overview & Gallery</button>
+           </div>
+       </div>
+   </main>
+
+   <!-- Overview 模态弹窗窗口 -->
+   <div id="overviewModal" class="overview-modal-backdrop" onclick="closeOverviewModal(event)">
+       <div class="overview-modal-content" onclick="event.stopPropagation()">
+           <button class="modal-close-btn" onclick="closeOverviewModal()">×</button>
+           <h2 id="modalTitle" style="color: #38bdf8; margin-top: 0; font-size: 1.8rem;">Overview</h2>
+           <div id="modalBody">
+               <p id="modalDescription" style="line-height: 1.7; color: #cbd5e1; font-size: 1.05rem;">
+                   项目详细介绍内容将会在这里展示。
+               </p>
+               <div class="overview-gallery" id="modalGallery">
+                   <!-- 照片卡片将由 JS 动态生成 -->
+               </div>
+           </div>
+       </div>
+   </div>
+
+   <!-- 全局自定义火箭光标 -->
+   <div id="rocketCursor" class="custom-rocket-cursor">
+       <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+           <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+           <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+           <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+           <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+           <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+           <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+       </svg>
+   </div>
+
+   <script src="javascript.js"></script>
+   <script>
+       let currentRegion = null;
+
+       // 每个项目的详细文字与对应照片路径
+       const projectData = {
+           hangzhou: {
+               title: "⛩️ 杭州项目 (Hangzhou Project)",
+               desc: "位于中国杭州的智慧城市/水乡文化前端互动平台，结合了西湖与江南风情要素，支持多维交互与动态数据展示。",
+               images: ["assets/images/about-myphoto.jpeg"] // 后续可追加如 "assets/images/project1-hangzhou-1.jpg"
+           },
+           sichuan: {
+               title: "🏔️ 川西藏区项目 (Western Sichuan Project)",
+               desc: "针对川西高原藏区地理/旅游/文化数字化的特化开发项目，注重离线体验、高海拔离线缓存以及多语言适配。",
+               images: ["assets/images/about-myphoto.jpeg"]
+           },
+           guangdong: {
+               title: "🏙️ 广东项目 (Guangdong Project)",
+               desc: "面向粤港澳大湾区的现代商业应用开发，包含高性能 API 数据对接与可视化交互大屏。",
+               images: ["assets/images/about-myphoto.jpeg"]
+           },
+           alaska: {
+               title: "❄️ 阿拉斯加项目 (Alaska Project)",
+               desc: "极地环境监测/极光数据可视化系统，处理高纬度遥感数据并支持 WebGL 实时高帧率绘制。",
+               images: ["assets/images/about-myphoto.jpeg"]
+           }
+       };
+
+       function showProject(regionKey) {
+           currentRegion = regionKey;
+           const data = projectData[regionKey];
+           if (!data) return;
+
+           const card = document.getElementById('project-detail');
+           document.getElementById('project-title').innerText = data.title;
+           document.getElementById('project-desc').innerText = data.desc;
+
+           card.style.display = 'block';
+           card.scrollIntoView({ behavior: 'smooth' });
+       }
+
+       function openOverviewModal() {
+           if (!currentRegion) return;
+           const data = projectData[currentRegion];
+           
+           document.getElementById('modalTitle').innerText = data.title + " - Overview";
+           document.getElementById('modalDescription').innerText = data.desc;
+
+           const gallery = document.getElementById('modalGallery');
+           gallery.innerHTML = data.images.map(img => `<img src="${img}" alt="Project Photo">`).join('');
+
+           document.getElementById('overviewModal').style.display = 'flex';
+       }
+
+       function closeOverviewModal(e) {
+           document.getElementById('overviewModal').style.display = 'none';
+       }
+   </script>
+</body>
+</html>
+
+________________
+
+
+User prompt: about me
+Response: 你的 about.html 已经准备好了！为了让你能直接用上最终版本的代码，我为你梳理了目前 about.html 的亮点，并补充了技能标签 (Skills) 与履历时间线 (Experience & Education) 占位板块，让页面看起来更丰满、更
+________________
+
+
+User prompt: about me后面的skiils和interest不见了
+Response: 因为在前面的代码重构中，我们聚焦在了个人照片和 PDF 简历按钮的布局上，未把 Skills（技能） 和 Interests（兴趣） 这两个模块贴出来。
+这里是重新把 Skills 和 Interests 补全后的完整 about.html。我采用了响应式网格和卡片式的样式布局，既好看又容易扫描：
+完整版 about.html（已补回 Skills 与 Interests）
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>About | Jack's Portfolio</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+       .about-container {
+           max-width: 1000px;
+           margin: 100px auto 4rem;
+           padding: 0 2rem;
+           position: relative;
+           z-index: 10;
+       }
+
+       .about-hero {
+           display: grid;
+           grid-template-columns: 1fr 2fr;
+           gap: 3rem;
+           align-items: center;
+           margin-bottom: 3rem;
+       }
+
+       .profile-img-wrapper {
+           position: relative;
+           border-radius: 20px;
+           overflow: hidden;
+           border: 2px solid rgba(56, 189, 248, 0.3);
+           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+           background: rgba(15, 23, 42, 0.6);
+       }
+
+       .profile-img {
+           width: 100%;
+           height: auto;
+           display: block;
+           object-fit: cover;
+       }
+
+       .about-content h1 {
+           font-size: 2.5rem;
+           margin-bottom: 1rem;
+           color: #ffffff;
+       }
+
+       .about-content p {
+           color: #94a3b8;
+           line-height: 1.7;
+           margin-bottom: 1.5rem;
+           font-size: 1.05rem;
+       }
+
+       .btn-resume {
+           display: inline-flex;
+           align-items: center;
+           gap: 0.5rem;
+           padding: 12px 24px;
+           border-radius: 8px;
+           background: var(--accent-color, #38bdf8);
+           color: #0f172a;
+           font-weight: 700;
+           text-decoration: none;
+           transition: all 0.3s ease;
+           box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+       }
+
+       .btn-resume:hover {
+           background: #0284c7;
+           color: #ffffff;
+           transform: translateY(-2px);
+           box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+       }
+
+       /* 技能与兴趣模块样式 */
+       .info-grid {
+           display: grid;
+           grid-template-columns: 1fr 1fr;
+           gap: 2rem;
+           margin-top: 2rem;
+       }
+
+       .info-card {
+           background: rgba(15, 23, 42, 0.7);
+           border: 1px solid rgba(255, 255, 255, 0.1);
+           border-radius: 16px;
+           padding: 2rem;
+           backdrop-filter: blur(8px);
+       }
+
+       .info-card h2 {
+           color: var(--accent-color, #38bdf8);
+           font-size: 1.4rem;
+           margin-top: 0;
+           margin-bottom: 1.2rem;
+           display: flex;
+           align-items: center;
+           gap: 0.5rem;
+       }
+
+       /* 标签云样式 (技能 & 兴趣) */
+       .tag-list {
+           display: flex;
+           flex-wrap: wrap;
+           gap: 0.8rem;
+           list-style: none;
+           padding: 0;
+           margin: 0;
+       }
+
+       .tag-item {
+           background: rgba(56, 189, 248, 0.1);
+           border: 1px solid rgba(56, 189, 248, 0.25);
+           color: #e2e8f0;
+           padding: 6px 14px;
+           border-radius: 20px;
+           font-size: 0.9rem;
+           font-weight: 500;
+           transition: all 0.2s ease;
+       }
+
+       .tag-item:hover {
+           background: rgba(56, 189, 248, 0.2);
+           color: #ffffff;
+           border-color: #38bdf8;
+           transform: translateY(-2px);
+       }
+
+       @media (max-width: 768px) {
+           .about-hero {
+               grid-template-columns: 1fr;
+               text-align: center;
+           }
+           .info-grid {
+               grid-template-columns: 1fr;
+           }
+       }
+   </style>
+</head>
+<body>
+
+   <!-- 顶部固定导航栏 -->
+   <header class="site-header">
+       <nav class="navbar">
+           <div class="logo">
+               <button id="logoControlBtn" class="logo-btn">
+                   🚀 Jack's Portfolio
+               </button>
+           </div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html" class="active">About</a></li>
+               <li><a href="projects.html">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <!-- Command Center 控制面板 -->
+   <div id="controlPanel" class="control-panel-modal">
+       <div class="panel-header">
+           <h4>⚙️ Command Center</h4>
+       </div>
+       <div class="panel-item">
+           <span>Dark Mode (深色模式)</span>
+           <label class="switch">
+               <input type="checkbox" id="darkModeToggle" checked>
+               <span class="slider"></span>
+           </label>
+       </div>
+   </div>
+
+   <!-- 主主体内容 -->
+   <main class="about-container">
+       <!-- 头部：个人照片与简介 -->
+       <div class="about-hero">
+           <div class="profile-img-wrapper">
+               <img src="assets/images/about-myphoto.jpeg" alt="Jack's Profile Photo" class="profile-img">
+           </div>
+
+           <div class="about-content">
+               <h1>About Me</h1>
+               <p>
+                   Hi! I'm Jack, a developer and creative web builder passionate about crafting interactive digital experiences and spatial user interfaces. 
+                   I enjoy bringing together clean design, modern web technologies, and intuitive user workflows.
+               </p>
+               <div class="resume-btn-group">
+                   <a href="assets/docs/about-resume.pdf" target="_blank" class="btn-resume">
+                       📄 View Full Resume (PDF)
+                   </a>
+               </div>
+           </div>
+       </div>
+
+       <!-- 底部：Skills 与 Interests 区域 -->
+       <div class="info-grid">
+           <!-- 1. Skills 模块 -->
+           <div class="info-card">
+               <h2>⚡ Skills & Technologies</h2>
+               <ul class="tag-list">
+                   <li class="tag-item">HTML5 / CSS3</li>
+                   <li class="tag-item">JavaScript (ES6+)</li>
+                   <li class="tag-item">WebGL / Canvas 2D</li>
+                   <li class="tag-item">React / Next.js</li>
+                   <li class="tag-item">Node.js</li>
+                   <li class="tag-item">UI/UX Design</li>
+                   <li class="tag-item">Git & GitHub</li>
+                   <li class="tag-item">Responsive Web Design</li>
+               </ul>
+           </div>
+
+           <!-- 2. Interests 模块 -->
+           <div class="info-card">
+               <h2>🌟 Personal Interests</h2>
+               <ul class="tag-list">
+                   <li class="tag-item">🪐 Astronomy & Space</li>
+                   <li class="tag-item">📷 Photography</li>
+                   <li class="tag-item">🥾 Hiking & Exploring</li>
+                   <li class="tag-item">🎮 Interactive Media</li>
+                   <li class="tag-item">🎧 Electronic Music</li>
+                   <li class="tag-item">✈️ Traveling</li>
+               </ul>
+           </div>
+       </div>
+   </main>
+
+   <!-- 全局自定义火箭光标 -->
+   <div id="rocketCursor" class="custom-rocket-cursor">
+       <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+           <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+           <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+           <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+           <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+           <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+           <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+       </svg>
+   </div>
+
+   <!-- 引入全局逻辑 -->
+   <script src="javascript.js"></script>
+</body>
+</html>
+
+你可以随时在 <li class="tag-item"> 标签里增减你真实的技能和兴趣项目！
+________________
+
+
+User prompt: 我已经放入了project1-chuanxi1和2，alaksa1/2，hth1/2(义卖)；广东那个放敬请期待的英文
+Response: 针对更新后的图片路径和广东项目的“敬请期待”，我已经为你把 projectp1.html 的 JavaScript 数据配置更新完毕。
+你只需要用下面的代码替换掉 projectp1.html 结尾处的 <script> 脚本部分即可：
+<script src="javascript.js"></script>
+<script>
+   let currentRegion = null;
+
+   // 适配你最新的图片文件名与项目内容
+   const projectData = {
+       hangzhou: {
+           title: "⛩️ 杭州义卖项目 (Hangzhou Charity Sale)",
+           desc: "位于杭州的线上义卖与文化传播互动平台，支持义卖展示、义卖作品轮播与公益数据追踪。",
+           images: [
+               "assets/images/hth1.jpeg",
+               "assets/images/hth2.jpeg"
+           ]
+       },
+       sichuan: {
+           title: "🏔️ 川西项目 (Western Sichuan Project)",
+           desc: "针对川西风光与藏区文化数字化的特化开发项目，注重自然景观的高清呈现与离线体验优化。",
+           images: [
+               "assets/images/project1-chuanxi1.jpeg",
+               "assets/images/project1-chuanxi2.jpeg"
+           ]
+       },
+       guangdong: {
+           title: "🏙️ 广东项目 (Guangdong Project)",
+           desc: "Coming Soon... (敬请期待)",
+           images: [] // 留空，弹窗内会展示 Coming Soon 提示
+       },
+       alaska: {
+           title: "❄️ 阿拉斯加项目 (Alaska Project)",
+           desc: "极地环境监测/极光数据可视化系统，处理高纬度遥感数据并支持 WebGL 实时高帧率绘制。",
+           images: [
+               "assets/images/alaksa1.jpeg",
+               "assets/images/alaksa2.jpeg"
+           ]
+       }
+   };
+
+   function showProject(regionKey) {
+       currentRegion = regionKey;
+       const data = projectData[regionKey];
+       if (!data) return;
+
+       const card = document.getElementById('project-detail');
+       document.getElementById('project-title').innerText = data.title;
+       document.getElementById('project-desc').innerText = data.desc;
+
+       card.style.display = 'block';
+       card.scrollIntoView({ behavior: 'smooth' });
+   }
+
+   function openOverviewModal() {
+       if (!currentRegion) return;
+       const data = projectData[currentRegion];
+       
+       document.getElementById('modalTitle').innerText = data.title + " - Overview";
+       document.getElementById('modalDescription').innerText = data.desc;
+
+       const gallery = document.getElementById('modalGallery');
+       
+       // 如果没有图片（如广东项目），展示 Coming Soon 占位卡片
+       if (data.images.length === 0) {
+           gallery.innerHTML = `
+               <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2);">
+                   <p style="color: #94a3b8; font-size: 1.2rem; margin: 0;">🚧 Project Details Coming Soon...</p>
+               </div>
+           `;
+       } else {
+           gallery.innerHTML = data.images.map(img => `<img src="${img}" alt="Project Photo">`).join('');
+       }
+
+       document.getElementById('overviewModal').style.display = 'flex';
+   }
+
+   function closeOverviewModal(e) {
+       document.getElementById('overviewModal').style.display = 'none';
+   }
+</script>
+
+更新重点说明：
+   1. 图片路径映射：已正确匹配你放入的 project1-chuanxi1/2、alaksa1/2 以及 hth1/2（扩展名自动适配为常用的 .jpeg，如果是 .jpg 或 .png 可以直接在数组里调整后缀）。
+   2. 广东项目空状态处理：点击广东项目的 Overview 弹窗时，系统会自动渲染优雅的 🚧 Project Details Coming Soon... 占位框。
+________________
+
+
+User prompt: 这是chuanxi1，你看看地址是不是有问题我网站打不开这个照片
+Response: 问题出在图片的文件后缀名（文件格式）上！
+你上传的这张照片文件名是 project1-chuanxi1.jpg（后缀是 .jpg），但在刚才的代码中写的是 project1-chuanxi1.jpeg（后缀是 .jpeg）。在代码中，哪怕多一个字母 e，浏览器都找不到文件（报 404 错误）。
+这里是为你修正后缀后的完整 projectData 代码，请直接替换：
+const projectData = {
+   hangzhou: {
+       title: "⛩️ 杭州义卖项目 (Hangzhou Charity Sale)",
+       desc: "位于杭州的线上义卖与文化传播互动平台，支持义卖展示、义卖作品轮播与公益数据追踪。",
+       images: [
+           "assets/images/hth1.jpg",
+           "assets/images/hth2.jpg"
+       ]
+   },
+   sichuan: {
+       title: "🏔️ 川西项目 (Western Sichuan Project)",
+       desc: "针对川西风光与藏区文化数字化的特化开发项目，注重自然景观的高清呈现与离线体验优化。",
+       images: [
+           "assets/images/project1-chuanxi1.jpg",
+           "assets/images/project1-chuanxi2.jpg"
+       ]
+   },
+   guangdong: {
+       title: "🏙️ 广东项目 (Guangdong Project)",
+       desc: "Coming Soon... (敬请期待)",
+       images: []
+   },
+   alaska: {
+       title: "❄️ 阿拉斯加项目 (Alaska Project)",
+       desc: "极地环境监测/极光数据可视化系统，处理高纬度遥感数据并支持 WebGL 实时高帧率绘制。",
+       images: [
+           "assets/images/alaksa1.jpg",
+           "assets/images/alaksa2.jpg"
+       ]
+   }
+};
+
+排查提示（如果修改后依然显示不出来）：
+   * 拼写检查：请确保你的本地文件夹 assets/images/ 里的照片名字是 project1-chuanxi1.jpg（注意是否多了/少了空格，或者 alaska 拼写是否为 alaksa）。
+   * 大小写敏感：如果是 .JPG（大写），代码也必须写成 .JPG。
+________________
+
+
+User prompt: 基本完成了，现在还需要做到适应其他类型的电子设备，主要是在手机上也能看
+Response: 要实现完美适配手机、平板等移动端设备（即响应式布局 Responsive Web Design），主要需要解决以下几个核心问题：
+   * 顶部导航栏：手机屏幕太窄，导航选项需要收纳为汉堡包菜单（Hamburger Menu）或折叠布局。
+   * 地图与标记点：手机上地图太小会导致点击困难，需要允许水平滚动或缩放保护。
+   * 全局自定义光标：手机/触屏设备没有鼠标指针，火箭光标在移动端必须自动隐藏，避免干扰点击。
+   * 图片与弹窗：图片高度和弹窗宽度需要按屏幕比例自适应。
+以下是针对 style.css 和 javascript.js 的完整适配方案：
+一、 更新 style.css（在文件末尾追加移动端响应式样式）
+请将以下媒体查询 CSS 代码直接粘贴到你的 style.css 文件最底部：
+/* ==========================================
+  移动端/响应式适配 (Responsive Media Queries)
+  ========================================== */
+
+/* 触屏设备禁用自定义火箭光标 */
+@media (hover: none) and (pointer: coarse) {
+   .custom-rocket-cursor {
+       display: none !important;
+   }
+   body {
+       cursor: auto !important;
+   }
+}
+
+/* 屏幕宽度小于 768px (手机及小平板) */
+@media (max-width: 768px) {
+   /* 1. 导航栏调整 */
+   .navbar {
+       padding: 0.8rem 1rem;
+       flex-wrap: wrap;
+   }
+
+   .logo-btn {
+       font-size: 1.1rem;
+   }
+
+   .nav-links {
+       gap: 0.8rem;
+       font-size: 0.9rem;
+   }
+
+   .nav-links a {
+       padding: 4px 8px;
+   }
+
+   /* 2. Command Center 面板移动端定位 */
+   .control-panel-modal {
+       width: 90%;
+       left: 5% !important;
+       top: 70px !important;
+   }
+
+   /* 3. 地图区域适配：允许横向滑动，防止标记重叠 */
+   .map-wrapper {
+       min-width: 600px; /* 保持地图最小宽度，保证清晰度和标记点可点击 */
+   }
+
+   /* 地图外层容器加横向滚动条 */
+   .map-scroll-container {
+       width: 100%;
+       overflow-x: auto;
+       -webkit-overflow-scrolling: touch;
+       border-radius: 16px;
+       margin-bottom: 1rem;
+   }
+
+   .marker-icon-wrapper {
+       width: 36px;
+       height: 36px;
+       font-size: 1rem;
+   }
+
+   .marker-label {
+       padding: 2px 6px;
+   }
+
+   .marker-label .en-name { font-size: 0.75rem; }
+   .marker-label .cn-name { font-size: 0.65rem; }
+
+   /* 4. Overview 模态弹窗适配 */
+   .overview-modal-content {
+       width: 95%;
+       padding: 1.5rem 1.2rem;
+       max-height: 90vh;
+   }
+
+   .overview-gallery {
+       grid-template-columns: 1fr; /* 手机上图片单列展示 */
+       gap: 0.8rem;
+   }
+
+   .overview-gallery img {
+       height: 200px;
+   }
+}
+
+二、 修改 projectp1.html 的地图容器结构
+为了防止地图在小屏幕手机上被挤压变形导致标记点位置错乱，我们需要在 .map-wrapper 外面套一层滚动容器：
+找到 projectp1.html 中的地图部分，修改为：
+<!-- 包裹一层 map-scroll-container 允许手机端横向滑动查看地图 -->
+<div class="map-scroll-container">
+   <div class="map-wrapper">
+       <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" alt="World Map" class="world-map-img">
+
+       <div class="map-marker" style="top: 44.5%; left: 81.5%;" onclick="showProject('hangzhou')">
+           <div class="marker-icon-wrapper">⛩️</div>
+           <div class="marker-label"><span class="en-name">Hangzhou</span><span class="cn-name">杭州</span></div>
+       </div>
+
+       <div class="map-marker" style="top: 42%; left: 75.5%;" onclick="showProject('sichuan')">
+           <div class="marker-icon-wrapper">🏔️</div>
+           <div class="marker-label"><span class="en-name">W. Sichuan</span><span class="cn-name">川西藏区</span></div>
+       </div>
+
+       <div class="map-marker" style="top: 48%; left: 79.5%;" onclick="showProject('guangdong')">
+           <div class="marker-icon-wrapper">🏙️</div>
+           <div class="marker-label"><span class="en-name">Guangdong</span><span class="cn-name">广东</span></div>
+       </div>
+
+       <div class="map-marker" style="top: 18%; left: 14%;" onclick="showProject('alaska')">
+           <div class="marker-icon-wrapper">❄️</div>
+           <div class="marker-label"><span class="en-name">Alaska</span><span class="cn-name">阿拉斯加</span></div>
+       </div>
+   </div>
+</div>
+
+三、 优化 javascript.js 中的火箭光标触摸事件
+在手机上滑动屏幕时，不能让火箭光标跟着手指跳动。将 javascript.js 中控制光标的代码加上设备判断：
+// 全局火箭光标跟随逻辑
+const rocketCursor = document.getElementById('rocketCursor');
+
+// 仅在非触屏设备（有鼠标的设备）上启用火箭跟随
+if (rocketCursor && window.matchMedia('(pointer: fine)').matches) {
+   document.addEventListener('mousemove', (e) => {
+       rocketCursor.style.left = `${e.clientX}px`;
+       rocketCursor.style.top = `${e.clientY}px`;
+   });
+} else if (rocketCursor) {
+   // 移动端/触屏设备直接隐藏
+   rocketCursor.style.display = 'none';
+}
+
+手机端调试建议：
+   1. 在电脑浏览器（Chrome / Edge）按 F12 打开开发者工具。
+   2. 点击左上角的 📱 移动端设备切换图标 (Toggle device toolbar)。
+   3. 选择 iPhone 12 Pro 或 Pixel 7 视窗，检查页面文字大小、卡片排版和图片弹窗是否正常无错位。
+________________
+
+
+User prompt: 给我完整版的project1和java
+Response: 这里是为你整合好的完整版 projectp1.html 与 javascript.js。
+已为你集成所有最新逻辑：包含移动端触屏适配（触屏自动隐藏光标、地图横向安全滚动）、对应 .jpg 后缀的照片数组、广东项目空状态处理以及 Overview 模态弹窗。
+一、 完整版 projectp1.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Part 1: Regional Projects | Jack</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+       /* 地图外层滚动容器（保障手机端可横向滑动） */
+       .map-scroll-container {
+           width: 100%;
+           overflow-x: auto;
+           -webkit-overflow-scrolling: touch;
+           border-radius: 20px;
+           margin: 2rem 0;
+       }
+
+       .map-wrapper {
+           position: relative;
+           width: 100%;
+           min-width: 650px; /* 保证手机端地图不被挤压变形 */
+           max-width: 1000px;
+           margin: 0 auto;
+           border-radius: 20px;
+           overflow: hidden;
+           border: 2px solid rgba(255, 255, 255, 0.15);
+           background-color: #0284c7;
+           box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+       }
+
+       .world-map-img {
+           width: 100%;
+           height: auto;
+           display: block;
+           filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.3)) hue-rotate(60deg) saturate(1.8) brightness(1.1);
+       }
+
+       .map-marker {
+           position: absolute;
+           transform: translate(-50%, -50%);
+           cursor: pointer;
+           z-index: 10;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+       }
+
+       .map-marker:hover {
+           transform: translate(-50%, -50%) scale(1.2);
+           z-index: 30;
+       }
+
+       .marker-icon-wrapper {
+           width: 44px;
+           height: 44px;
+           background: rgba(15, 23, 42, 0.88);
+           border: 2px solid #fde047;
+           border-radius: 50%;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           font-size: 1.3rem;
+           box-shadow: 0 0 15px rgba(253, 224, 71, 0.6);
+       }
+
+       .marker-label {
+           margin-top: 6px;
+           background: rgba(15, 23, 42, 0.92);
+           border: 1px solid rgba(255, 255, 255, 0.2);
+           padding: 4px 10px;
+           border-radius: 12px;
+           text-align: center;
+           backdrop-filter: blur(6px);
+       }
+
+       .marker-label .en-name { font-size: 0.85rem; font-weight: 700; color: #ffffff; display: block; }
+       .marker-label .cn-name { font-size: 0.75rem; font-weight: 600; color: #fde047; display: block; }
+
+       .project-detail-modal {
+           display: none;
+           margin-top: 2rem;
+           animation: fadeIn 0.4s ease-out;
+       }
+
+       /* Overview 模态弹窗样式 */
+       .overview-modal-backdrop {
+           display: none;
+           position: fixed;
+           top: 0; left: 0; 
+           width: 100vw; height: 100vh;
+           background: rgba(2, 6, 23, 0.82);
+           backdrop-filter: blur(8px);
+           z-index: 200;
+           justify-content: center;
+           align-items: center;
+       }
+
+       .overview-modal-content {
+           background: #0f172a;
+           border: 1px solid rgba(56, 189, 248, 0.4);
+           border-radius: 20px;
+           width: 90%;
+           max-width: 720px;
+           max-height: 85vh;
+           overflow-y: auto;
+           padding: 2.5rem;
+           position: relative;
+           box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+           color: #f8fafc;
+       }
+
+       .modal-close-btn {
+           position: absolute;
+           top: 1.2rem;
+           right: 1.5rem;
+           background: transparent;
+           border: none;
+           color: #94a3b8;
+           font-size: 2rem;
+           cursor: pointer;
+           line-height: 1;
+           transition: color 0.2s ease;
+       }
+
+       .modal-close-btn:hover { color: #ffffff; }
+
+       .overview-gallery {
+           display: grid;
+           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+           gap: 1.2rem;
+           margin-top: 1.8rem;
+       }
+
+       .overview-gallery img {
+           width: 100%;
+           height: 180px;
+           object-fit: cover;
+           border-radius: 12px;
+           border: 1px solid rgba(255, 255, 255, 0.15);
+           transition: transform 0.3s ease;
+       }
+
+       .overview-gallery img:hover {
+           transform: scale(1.03);
+       }
+
+       @keyframes fadeIn {
+           from { opacity: 0; transform: translateY(12px); }
+           to { opacity: 1; transform: translateY(0); }
+       }
+
+       @media (max-width: 768px) {
+           .marker-icon-wrapper { width: 36px; height: 36px; font-size: 1rem; }
+           .marker-label { padding: 2px 6px; }
+           .marker-label .en-name { font-size: 0.75rem; }
+           .marker-label .cn-name { font-size: 0.65rem; }
+           .overview-modal-content { padding: 1.5rem 1.2rem; }
+           .overview-gallery { grid-template-columns: 1fr; }
+       }
+   </style>
+</head>
+<body>
+
+   <!-- 顶部固定导航栏 -->
+   <header class="site-header">
+       <nav class="navbar">
+           <div class="logo">
+               <button id="logoControlBtn" class="logo-btn">
+                   🚀 Jack's Portfolio
+               </button>
+           </div>
+           <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="about.html">About</a></li>
+               <li><a href="projects.html" class="active">Projects</a></li>
+               <li><a href="contact.html">Contact</a></li>
+           </ul>
+       </nav>
+   </header>
+
+   <!-- Command Center 控制面板 -->
+   <div id="controlPanel" class="control-panel-modal">
+       <div class="panel-header">
+           <h4>⚙️ Command Center</h4>
+       </div>
+       <div class="panel-item">
+           <span>Dark Mode (深色模式)</span>
+           <label class="switch">
+               <input type="checkbox" id="darkModeToggle" checked>
+               <span class="slider"></span>
+           </label>
+       </div>
+   </div>
+
+   <!-- 主主体内容 -->
+   <main class="page-container" style="max-width: 1100px; margin: 90px auto 2rem; padding: 0 1.5rem; position: relative; z-index: 10;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+           <h1>Part 1: Regional Projects</h1>
+           <a href="projects.html" class="btn btn-outline">← Back to Projects</a>
+       </div>
+       <p class="contact-subtitle">Click on any landmark pin across the map below to view project details.</p>
+
+       <!-- 包裹容器：适配手机滑动查看 -->
+       <div class="map-scroll-container">
+           <div class="map-wrapper">
+               <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" alt="World Map" class="world-map-img">
+
+               <div class="map-marker" style="top: 44.5%; left: 81.5%;" onclick="showProject('hangzhou')">
+                   <div class="marker-icon-wrapper">⛩️</div>
+                   <div class="marker-label"><span class="en-name">Hangzhou</span><span class="cn-name">杭州</span></div>
+               </div>
+
+               <div class="map-marker" style="top: 42%; left: 75.5%;" onclick="showProject('sichuan')">
+                   <div class="marker-icon-wrapper">🏔️</div>
+                   <div class="marker-label"><span class="en-name">W. Sichuan</span><span class="cn-name">川西藏区</span></div>
+               </div>
+
+               <div class="map-marker" style="top: 48%; left: 79.5%;" onclick="showProject('guangdong')">
+                   <div class="marker-icon-wrapper">🏙️</div>
+                   <div class="marker-label"><span class="en-name">Guangdong</span><span class="cn-name">广东</span></div>
+               </div>
+
+               <div class="map-marker" style="top: 18%; left: 14%;" onclick="showProject('alaska')">
+                   <div class="marker-icon-wrapper">❄️</div>
+                   <div class="marker-label"><span class="en-name">Alaska</span><span class="cn-name">阿拉斯加</span></div>
+               </div>
+           </div>
+       </div>
+
+       <!-- 底部选中项目简报卡片 -->
+       <div id="project-detail" class="info-card project-detail-modal">
+           <h3 id="project-title" style="color: var(--accent-color, #38bdf8); font-size: 1.5rem; margin-top: 0;">Select a marker on the map</h3>
+           <p id="project-desc" style="margin: 1rem 0; color: #94a3b8;">Click any landmark pin above to load project information.</p>
+           <div class="project-links">
+               <button id="overviewBtn" onclick="openOverviewModal()" class="btn">Overview & Gallery</button>
+           </div>
+       </div>
+   </main>
+
+   <!-- Overview 模态弹窗窗口 -->
+   <div id="overviewModal" class="overview-modal-backdrop" onclick="closeOverviewModal(event)">
+       <div class="overview-modal-content" onclick="event.stopPropagation()">
+           <button class="modal-close-btn" onclick="closeOverviewModal()">×</button>
+           <h2 id="modalTitle" style="color: #38bdf8; margin-top: 0; font-size: 1.8rem;">Overview</h2>
+           <div id="modalBody">
+               <p id="modalDescription" style="line-height: 1.7; color: #cbd5e1; font-size: 1.05rem;">
+                   项目详细介绍内容将会在这里展示。
+               </p>
+               <div class="overview-gallery" id="modalGallery">
+                   <!-- 照片卡片将由 JS 动态生成 -->
+               </div>
+           </div>
+       </div>
+   </div>
+
+   <!-- 全局自定义火箭光标 -->
+   <div id="rocketCursor" class="custom-rocket-cursor">
+       <svg class="rocket-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path class="rocket-flame" d="M32 46C28 54 32 62 32 62C32 62 36 54 32 46Z" fill="#f97316"/>
+           <path class="rocket-flame" d="M32 48C30 53 32 58 32 58C32 58 34 53 32 48Z" fill="#fde047"/>
+           <path d="M32 6C22 16 20 32 20 40H44C44 32 42 16 32 6Z" fill="#e2e8f0"/>
+           <path d="M32 6C27 16 25 32 25 40H39C39 32 37 16 32 6Z" fill="#38bdf8"/>
+           <path d="M16 30L20 36V44L12 40V34L16 30Z" fill="#94a3b8"/>
+           <path d="M48 30L44 36V44L52 40V34L48 30Z" fill="#94a3b8"/>
+           <circle cx="32" cy="22" r="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+       </svg>
+   </div>
+
+   <script src="javascript.js"></script>
+   <script>
+       let currentRegion = null;
+
+       // 匹配你的实际图片文件名 (.jpg)
+       const projectData = {
+           hangzhou: {
+               title: "⛩️ 杭州义卖项目 (Hangzhou Charity Sale)",
+               desc: "位于杭州的线上义卖与文化传播互动平台，支持义卖展示、义卖作品轮播与公益数据追踪。",
+               images: [
+                   "assets/images/hth1.jpg",
+                   "assets/images/hth2.jpg"
+               ]
+           },
+           sichuan: {
+               title: "🏔️ 川西项目 (Western Sichuan Project)",
+               desc: "针对川西风光与藏区文化数字化的特化开发项目，注重自然景观的高清呈现与离线体验优化。",
+               images: [
+                   "assets/images/project1-chuanxi1.jpg",
+                   "assets/images/project1-chuanxi2.jpg"
+               ]
+           },
+           guangdong: {
+               title: "🏙️ 广东项目 (Guangdong Project)",
+               desc: "Coming Soon... (敬请期待)",
+               images: []
+           },
+           alaska: {
+               title: "❄️ 阿拉斯加项目 (Alaska Project)",
+               desc: "极地环境监测/极光数据可视化系统，处理高纬度遥感数据并支持 WebGL 实时高帧率绘制。",
+               images: [
+                   "assets/images/alaksa1.jpg",
+                   "assets/images/alaksa2.jpg"
+               ]
+           }
+       };
+
+       function showProject(regionKey) {
+           currentRegion = regionKey;
+           const data = projectData[regionKey];
+           if (!data) return;
+
+           const card = document.getElementById('project-detail');
+           document.getElementById('project-title').innerText = data.title;
+           document.getElementById('project-desc').innerText = data.desc;
+
+           card.style.display = 'block';
+           card.scrollIntoView({ behavior: 'smooth' });
+       }
+
+       function openOverviewModal() {
+           if (!currentRegion) return;
+           const data = projectData[currentRegion];
+           
+           document.getElementById('modalTitle').innerText = data.title + " - Overview";
+           document.getElementById('modalDescription').innerText = data.desc;
+
+           const gallery = document.getElementById('modalGallery');
+           
+           // 空图片提示 (如广东项目)
+           if (data.images.length === 0) {
+               gallery.innerHTML = `
+                   <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2);">
+                       <p style="color: #94a3b8; font-size: 1.1rem; margin: 0;">🚧 Project Details Coming Soon...</p>
+                   </div>
+               `;
+           } else {
+               gallery.innerHTML = data.images.map(img => `<img src="${img}" alt="Project Photo">`).join('');
+           }
+
+           document.getElementById('overviewModal').style.display = 'flex';
+       }
+
+       function closeOverviewModal(e) {
+           document.getElementById('overviewModal').style.display = 'none';
+       }
+   </script>
+</body>
+</html>
+
+二、 完整版 javascript.js
+这个文件统领全站的全局互动：火箭光标（含触屏设备自动隐藏/桌面鼠标悬停变大）、Command Center 左上角控制面板、深色/浅色模式切换 以及 主页 2D 太阳系 Canvas 动画渲染。
+直接用以下完整代码替换你的 javascript.js 文件：
+/* ==========================================================================
+  Jack's Portfolio - Global JavaScript Engine
+  ========================================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+   // ----------------------------------------------------------------------
+   // 1. 全局火箭光标逻辑 (Rocket Cursor)
+   // ----------------------------------------------------------------------
+   const rocket = document.getElementById('rocketCursor');
+   
+   // 仅在配备鼠标的设备上开启光标跟随，移动端触屏设备直接隐藏
+   if (rocket && window.matchMedia('(pointer: fine)').matches) {
+       window.addEventListener('mousemove', (e) => {
+           rocket.style.left = `${e.clientX}px`;
+           rocket.style.top = `${e.clientY}px`;
+       });
+
+       // 悬停交互元素时变大提示
+       const interactiveSelector = 'a, button, .map-marker, input, .switch, [role="button"]';
+       document.addEventListener('mouseover', (e) => {
+           if (e.target.closest(interactiveSelector)) rocket.classList.add('hovering');
+       });
+       document.addEventListener('mouseout', (e) => {
+           if (e.target.closest(interactiveSelector)) rocket.classList.remove('hovering');
+       });
+   } else if (rocket) {
+       rocket.style.display = 'none';
+   }
+
+
+   // ----------------------------------------------------------------------
+   // 2. 左上角 Command Center 控制面板
+   // ----------------------------------------------------------------------
+   const logoBtn = document.getElementById('logoControlBtn');
+   const controlPanel = document.getElementById('controlPanel');
+   const darkModeToggle = document.getElementById('darkModeToggle');
+
+   if (logoBtn && controlPanel) {
+       logoBtn.addEventListener('click', (e) => {
+           e.stopPropagation();
+           const isVisible = controlPanel.style.display === 'block';
+           controlPanel.style.display = isVisible ? 'none' : 'block';
+       });
+
+       // 点击外部区域自动关闭控制面板
+       document.addEventListener('click', (e) => {
+           if (!controlPanel.contains(e.target) && e.target !== logoBtn) {
+               controlPanel.style.display = 'none';
+           }
+       });
+   }
+
+   // 主题本地化记忆 (Local Storage Theme State)
+   const savedTheme = localStorage.getItem('theme');
+   if (savedTheme === 'light') {
+       document.body.classList.add('light-mode');
+       if (darkModeToggle) darkModeToggle.checked = false;
+   }
+
+   if (darkModeToggle) {
+       darkModeToggle.addEventListener('change', (e) => {
+           if (e.target.checked) {
+               document.body.classList.remove('light-mode');
+               localStorage.setItem('theme', 'dark');
+           } else {
+               document.body.classList.add('light-mode');
+               localStorage.setItem('theme', 'light');
+           }
+       });
+   }
+
+
+   // ----------------------------------------------------------------------
+   // 3. 太阳系 Canvas 2D 互动渲染 (仅在存在 solarCanvas 的 index.html 生效)
+   // ----------------------------------------------------------------------
+   const canvas = document.getElementById('solarCanvas');
+   if (canvas) {
+       const ctx = canvas.getContext('2d');
+       let width = canvas.width = window.innerWidth;
+       let height = canvas.height = window.innerHeight;
+
+       window.addEventListener('resize', () => {
+           width = canvas.width = window.innerWidth;
+           height = canvas.height = window.innerHeight;
+       });
+
+       // 太阳系星球配置
+       const sun = { x: width / 2, y: height / 2, radius: 35, color: '#f59e0b' };
+       
+       const planets = [
+           { name: 'Mercury', radius: 6, orbit: 80, speed: 0.02, angle: 0, color: '#94a3b8' },
+           { name: 'Venus', radius: 10, orbit: 130, speed: 0.015, angle: 1, color: '#f39c12' },
+           { name: 'Earth', radius: 12, orbit: 190, speed: 0.01, angle: 2, color: '#38bdf8' },
+           { name: 'Mars', radius: 8, orbit: 250, speed: 0.008, angle: 3, color: '#ef4444' },
+           { name: 'Jupiter', radius: 20, orbit: 330, speed: 0.005, angle: 4, color: '#eab308' }
+       ];
+
+       // 渲染循环
+       function animate() {
+           ctx.clearRect(0, 0, width, height);
+
+           const centerX = width / 2;
+           const centerY = height / 2;
+
+           // 1. 绘制太阳
+           ctx.beginPath();
+           ctx.arc(centerX, centerY, sun.radius, 0, Math.PI * 2);
+           ctx.fillStyle = sun.color;
+           ctx.shadowBlur = 30;
+           ctx.shadowColor = sun.color;
+           ctx.fill();
+           ctx.shadowBlur = 0; // 重置阴影
+
+           // 2. 绘制轨道与行星
+           planets.forEach(p => {
+               p.angle += p.speed;
+
+               // 绘制轨迹线
+               ctx.beginPath();
+               ctx.arc(centerX, centerY, p.orbit, 0, Math.PI * 2);
+               ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+               ctx.lineWidth = 1;
+               ctx.stroke();
+
+               // 计算行星坐标
+               const px = centerX + Math.cos(p.angle) * p.orbit;
+               const py = centerY + Math.sin(p.angle) * p.orbit;
+
+               // 绘制行星本体
+               ctx.beginPath();
+               ctx.arc(px, py, p.radius, 0, Math.PI * 2);
+               ctx.fillStyle = p.color;
+               ctx.fill();
+           });
+
+           requestAnimationFrame(animate);
+       }
+
+       animate();
+   }
+});
+
+________________
