@@ -1,3 +1,5 @@
+//AI Usage:
+//I used Google Gemini to help me adjust the style. I also used it to built the interactive button. I also used Gemini to create interactive designs. I modified the color I want and the size of patterns.
 window.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('solarCanvas');
     if (!canvas) return;
