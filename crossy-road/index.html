@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Cyber Crossy 2077 - Dual Dimension Edition</title>
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- Three.js 核心库 (带 CDN 故障自动降级容灾) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    if (typeof THREE === 'undefined') {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');
+    }
+  </script>
+</head>
+<body>
+
+<div id="game-container"></div>
+<div id="dim-flash"></div>
+
+<!-- 顶栏 HUD -->
+<div id="hud">
+  <div class="hud-card">
+    <div id="score-wrap"><span class="label">NODES</span><span id="score-val">0</span></div>
+    <div id="best-wrap">TOP <span id="best-val">0</span></div>
+  </div>
+
+  <div class="hud-card" style="padding:6px 12px; gap:8px;">
+    <!-- 维度切换按钮 (按 SPACE 键) -->
+    <button id="dim-btn" class="dim-btn-a" title="Dimension Shift (SPACE)">
+      <span id="dim-label">🔴 DIM A: NET</span>
+    </button>
+    <div id="timer-badge" class="timer-normal">
+      <span>⚡</span>
+      <span id="timer-text">10s</span>
+    </div>
+    <!-- 暂停按钮 (ESC 快捷键) -->
+    <button id="pause-btn" class="hud-btn" title="Pause Game (ESC)">⏸️</button>
+    <!-- 语言切换按钮 (默认 EN，右上角切换中文/EN) -->
+    <button id="lang-btn" class="hud-btn" title="Switch Language">🌐 EN</button>
+    <!-- 音效切换按钮 -->
+    <button id="sound-btn" class="hud-btn" title="Toggle Sound">🔊</button>
+  </div>
+</div>
+
+<div id="controls-tip">⌨️ WASD to Move · [SPACE] Dimension Shift · [ESC] Pause</div>
+
+<!-- 移动端虚拟按键 -->
+<div id="touch-nav">
+  <button class="touch-btn" id="btn-dim-mobile">SHIFT</button>
+  <button class="touch-btn" id="btn-up">▲</button>
+  <div></div>
+  <button class="touch-btn" id="btn-left">◀</button>
+  <button class="touch-btn" id="btn-down">▼</button>
+  <button class="touch-btn" id="btn-right">▶</button>
+</div>
+
+<!-- 暂停界面 (ESC 触发) -->
+<div id="pause-screen" class="overlay-screen" style="display:none;">
+  <div class="modal-box">
+    <h1 id="pause-title">⏸️ <span>SYSTEM</span> PAUSED</h1>
+    <p id="pause-desc">Data uplink suspended. Press [ESC] or click below to resume.</p>
+    <div class="modal-actions">
+      <button id="btn-resume" class="btn-cyber">RESUME</button>
+      <button id="btn-pause-restart" class="btn-cyber btn-cyber-secondary">RESTART</button>
+    </div>
+  </div>
+</div>
+
+<!-- 开始游戏界面 -->
+<div id="start-screen" class="overlay-screen">
+  <div class="modal-box">
+    <h1><span>CYBER</span> CROSSY</h1>
+    <p>Infiltrate the sprawl as a neon hacker! Press [SPACE] to shift between Physical Net (evade Firewall trucks) and Deep Data (ghost through cars, avoid Glitch Voids)!</p>
+    <div class="modal-actions">
+      <button id="btn-start" class="btn-cyber">JACK IN</button>
+    </div>
+  </div>
+</div>
+
+<!-- 死亡结算界面 -->
+<div id="gameover-screen" class="overlay-screen" style="display:none;">
+  <div class="modal-box">
+    <h1 id="death-title" style="color:#ff0055;">💥 LINK TERMINATED</h1>
+    <p id="death-reason" style="font-size:14px; color:#cbd5e1; margin-bottom:18px;">Your signal was shattered by oncoming traffic!</p>
+    <div class="score-summary">
+      <div class="summary-item">
+        <div class="num" id="final-score">0</div>
+        <div class="desc">Transferred Nodes</div>
+      </div>
+      <div class="summary-item">
+        <div class="num" id="final-best">0</div>
+        <div class="desc">Top Infiltration</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button id="btn-restart" class="btn-cyber">RETRY LINK</button>
+    </div>
+  </div>
+</div>
+
+<!-- 引入主游戏逻辑 -->
+<script src="javascript.js"></script>
+</body>
+</html>
