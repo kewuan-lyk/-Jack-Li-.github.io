@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéSearch - Pokemon Search Engine</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo">
+                <span class="pokeball-icon"><i class="fa-solid fa-compact-disc"></i></span>
+                <h1>Poké<span>Search</span></h1>
+            </div>
+            <div class="header-actions">
+                <a href="https://kewuan-lyk.github.io/-Jack-Li-API-Pokemon-Collector/" target="_blank" rel="noopener noreferrer" class="pokedex-link-btn" title="Open Pokemon Collector Website">
+                    <i class="fa-solid fa-book-bookmark"></i> Pokédex Collector
+                </a>
+                <button id="toggle-settings-btn" class="settings-btn" title="Backend API Settings">
+                    <i class="fa-solid fa-gear"></i> Server Config
+                </button>
+            </div>
+        </header>
+
+        <!-- Settings Bar (Collapsible) -->
+        <div id="settings-panel" class="settings-panel hidden">
+            <div class="settings-content">
+                <label for="api-url-input">
+                    <i class="fa-solid fa-server"></i> Backend Server URL:
+                </label>
+                <div class="api-input-group">
+                    <input type="url" id="api-url-input" placeholder="e.g. https://your-app.onrender.com">
+                    <button id="save-api-btn">Save</button>
+                    <button id="reset-api-btn" class="btn-secondary">Reset</button>
+                </div>
+                <small class="settings-hint">
+                    Enter your Render backend URL (or leave default for local testing).
+                </small>
+            </div>
+        </div>
+
+        <!-- Main Search Section -->
+        <main class="main-content">
+            <div class="search-box-container">
+                <div class="search-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Search by name or Pokedex ID (e.g. pikachu, 25)..." 
+                        autocomplete="off"
+                        autofocus
+                    >
+                    <button id="search-btn" class="search-btn">Search</button>
+                </div>
+                <div class="quick-tags">
+                    <span>Quick Try:</span>
+                    <button class="tag-btn" data-query="pikachu">Pikachu</button>
+                    <button class="tag-btn" data-query="charizard">Charizard</button>
+                    <button class="tag-btn" data-query="mewtwo">Mewtwo</button>
+                    <button class="tag-btn" data-query="1">#1 (Bulbasaur)</button>
+                    <button class="tag-btn" data-query="150">#150</button>
+                </div>
+            </div>
+
+            <!-- Display Area -->
+            <div id="display-area" class="display-area">
+                <!-- Initial Welcome State -->
+                <div id="welcome-state" class="state-card welcome-card">
+                    <div class="pokeball-illustration">
+                        <i class="fa-solid fa-circle-dot"></i>
+                    </div>
+                    <h2>Explore the Pokemon World</h2>
+                    <p>Enter a Pokemon English name or Pokédex number to get started!</p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading-state" class="state-card loading-card hidden">
+                    <div class="spinner-pokeball"></div>
+                    <p>Catching Pokemon data...</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="error-state" class="state-card error-card hidden">
+                    <div class="error-icon">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <h3 id="error-title">Oops! Search Failed</h3>
+                    <p id="error-message">Unable to find requested Pokemon.</p>
+                    <button id="retry-btn" class="retry-btn"><i class="fa-solid fa-rotate-right"></i> Try Again</button>
+                </div>
+
+                <!-- Pokemon Result Card -->
+                <div id="pokemon-card" class="pokemon-card hidden">
+                    <div class="card-header">
+                        <span id="pokemon-id" class="pokemon-id">#0000</span>
+                        <h2 id="pokemon-name" class="pokemon-name">Name</h2>
+                    </div>
+
+                    <div class="card-image-container">
+                        <img id="pokemon-image" src="" alt="Pokemon Image">
+                    </div>
+
+                    <div class="card-body">
+                        <div class="section-title">Type</div>
+                        <div id="pokemon-types" class="types-container">
+                            <!-- Badges will be rendered here dynamically -->
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <span class="stat-label"><i class="fa-solid fa-ruler-vertical"></i> Height</span>
+                                <span id="pokemon-height" class="stat-value">0 m</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label"><i class="fa-solid fa-weight-hanging"></i> Weight</span>
+                                <span id="pokemon-weight" class="stat-value">0 kg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by PokéAPI & Python FastAPI • Pokemon Search Engine</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
